@@ -1,5 +1,6 @@
 class OracleRouter:
-    route_app_labels = {'django_celery_results', 'crawler'}
+    #route_app_labels = {'django_celery_results', 'crawler'}
+    route_app_labels = {'crawler'}
 
     def db_for_read(self, model, **hints):
         #print(f'#### label={model._meta.app_label}')
