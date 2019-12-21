@@ -6,6 +6,7 @@ django-celery-beat
 #scrapy
 https://download.lfd.uci.edu/pythonlibs/t7epjj8p/Twisted-19.10.0-cp38-cp38-win_amd64.whl ; sys_platform == "win32"
 scrapy
+dateparser
 crochet
 # oracle
 cx-oracle==6.4.1 ; sys_platform == "linux"
