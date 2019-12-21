@@ -84,7 +84,8 @@ from celery.platforms import signals
 default_handler = signals['TERM']
 
 @app.task(bind=True)
-def ulsan_course_task(self, base=AbortableTask):
+#def ulsan_course_task(self, base=AbortableTask):
+def ulsan_course_task(self):
     '''
     from celery.contrib.abortable import AbortableAsyncResult
 
