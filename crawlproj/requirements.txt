@@ -1,0 +1,12 @@
+django==1.11.26
+django-timezone-field==2.1
+celery
+django-celery-results
+django-celery-beat
+#scrapy
+https://download.lfd.uci.edu/pythonlibs/t7epjj8p/Twisted-19.10.0-cp38-cp38-win_amd64.whl ; sys_platform == "win32"
+scrapy
+crochet
+# oracle
+cx-oracle==6.4.1 ; sys_platform == "linux"
+https://raw.githubusercontent.com/shevious/crawlproj/master/wheels/cx_Oracle-6.4.1-cp38-cp38-win_amd64.whl ; sys_platform == "win32"
