@@ -55,8 +55,6 @@ def run_spider(settings, task_id):
     d = runner.crawl(spider, task_id=task_id)
     return d
 
-from crawler.models import Task_log, Course_info
-
 # 울산 강좌 정보
 from Ulsan import settings as ulsan_settings
 
@@ -66,6 +64,8 @@ def ulsan_course_task(self):
     if task_id is None:
         task_id = uuid.uuid1()
     print(f'############# task started: task_id = {task_id}')
+
+    from crawler.models import Task_log, Course_info
 
     task_log = Task_log(task_id = task_id, name = 'ulsan_course')
     task_log.save()
