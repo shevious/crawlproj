@@ -7,29 +7,17 @@
 
 from crawler.models import Course_info
 
-'''
-from scrapy_djangoitem import DjangoItem
-class CourseItem(DjangoItem):
-    django_model = Course_info
-'''
-
-class UlsanPipeline(object):
+class course_pipeline(object):
     def process_item(self, item, spider):
-        # crawler/pipelines.py로 코드 이동함
-        '''
         print(f'process_item in pipeline: title={item["title"]}')
         # task_id 를 추가저장
         task_id = spider.task_id
         # 유효성 체크
 
         # db 등록
-        #course_item = CourseItem()
-        #course_item['course_nm'] = item['title']
-        #course_item.save()
-
         course_info = Course_info()
+        course_info.task_id = task_id
         course_info.course_nm = item['title']
         course_info.save()
-        '''
         
         return item

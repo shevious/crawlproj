@@ -64,5 +64,16 @@ class Course_info(models.Model):
     page_no =
     total_cnt =
     '''
+    task_id = models.CharField(null=True, max_length=100)
     class Meta:
         db_table = "CRAWL_COURSE_INFO"
+
+class Task_log(models.Model):
+    task_id = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='')
+    status = models.CharField(max_length=100, default='pending')
+    total_cnt = models.CharField(max_length=100, default='0')
+    created_at = models.DateTimeField(auto_now_add=True) # 해당 레코드 생성시 현재 시간 자동저장
+    updated_at = models.DateTimeField(auto_now=True) # 해당 레코드 갱신시 현재 시간 자동저장
+    class Meta:
+        db_table = "CRAWL_TASK_LOG"

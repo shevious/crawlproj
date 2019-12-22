@@ -29,13 +29,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-from Ulsan.spiders.uill_or_kr import UillOrKr
 from scrapy.crawler import CrawlerProcess
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor
 from scrapy.utils.project import get_project_settings
 from scrapy.settings import Settings
-from Ulsan import settings as ulsan_settings
 from scrapy.spiderloader import SpiderLoader
 
 from crochet import setup, wait_for
@@ -45,43 +43,43 @@ from celery.platforms import signals
 from celery import current_task
 import uuid
 
-#default_handler = signals['TERM']
+@wait_for(timeout=99999)
+def run_spider(settings, task_id):
+    s = Settings()
+    s.setmodule(settings)
+    sl = SpiderLoader(settings=s)
+    print('spider list=', sl.list())
+    spider = sl.load(sl.list()[0])
+    #configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
+    runner = CrawlerRunner(settings=s)
+    d = runner.crawl(spider, task_id=task_id)
+    return d
+
+from crawler.models import Task_log, Course_info
+
+# 울산 강좌 정보
+from Ulsan import settings as ulsan_settings
 
 @app.task(bind=True)
 def ulsan_course_task(self):
-    try:
-        setup()
-    except:
-        pass
-
     task_id = current_task.request.id
     if task_id is None:
         task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
 
-    print(f'############# task started = {task_id}')
+    task_log = Task_log(task_id = task_id, name = 'ulsan_course')
+    task_log.save()
 
-    @wait_for(timeout=99999)
-    def run_spider():
-        s = Settings()
-        s.setmodule(ulsan_settings)
-        #process = CrawlerProcess(get_project_settings())
-        sl = SpiderLoader(settings=s)
-        print('spider list=', sl.list())
-        spider = sl.load(sl.list()[0])
-        #process = CrawlerProcess(settings=s)
-        #d = process.crawl(spider)
-        #process.crawl(UillOrKr)
-        #process.start(stop_after_crawl=False)
-        #process.start()
-        #configure_logging({'LOG_FORMAT': '## %(levelname)s: %(message)s'})
-        #configure_logging({'LOG_LEVEL': 'DEBUG'})
-        runner = CrawlerRunner(settings=s)
-        #print(f'#### settings.LOG_ENABLED = {s["LOG_ENABLED"]}')
-        d = runner.crawl(spider, task_id=task_id)
-        #d.addBoth(lambda _: reactor.stop())
-        #reactor.run()
-        #return d
-        return d
+    settings = ulsan_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.course_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
-    d = run_spider()
+    setup()
+    d = run_spider(settings, task_id)
+    task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
+    task_log.status = 'success'
+    task_log.save()
+
     print('############## task ended')
