@@ -16,6 +16,8 @@ class CourseItem(DjangoItem):
 class UlsanPipeline(object):
     def process_item(self, item, spider):
         print(f'process_item in pipeline: title={item["title"]}')
+        # task_id 를 추가저장
+        task_id = spider.task_id
         # 유효성 체크
 
         # db 등록

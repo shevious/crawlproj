@@ -97,9 +97,7 @@ class UillOrKr(BasePortiaSpider):
                         float("%.3f" % (dt.second + dt.microsecond / 1e6)),
                         dt.strftime('%z')
                     )
-                    #print('####', item['lecturer'])
-                    #print('parse_item in spider', 'title = ', item['title'])
-                    print(f'print parse_item in pipeline: title={item["title"]}')
+                    #print(f'print parse_item in pipeline: title={item["title"]}')
                     #logging.info(f'####info parse_item in pipeline: title={item["title"]}')
                     #logging.debug(f'####debug parse_item in pipeline: title={item["title"]}')
                     yield item
