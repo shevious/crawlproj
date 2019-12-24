@@ -44,16 +44,21 @@ from celery import current_task
 import uuid
 
 @wait_for(timeout=99999)
-def run_spider(settings, task_id):
+def run_spider(settings, keyheader=''):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
     print('spider list=', sl.list())
     spider = sl.load(sl.list()[0])
-    #configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
+    configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
     runner = CrawlerRunner(settings=s)
-    d = runner.crawl(spider, task_id=task_id)
+    d = runner.crawl(spider, keyheader=keyheader)
     return d
+
+# 헤더 정보 및 고유값
+keyheaders = {
+    "ulsan": "UL"
+}
 
 # 울산 강좌 정보
 from Ulsan import settings as ulsan_settings
@@ -64,11 +69,12 @@ def ulsan_course_task(self):
     if task_id is None:
         task_id = uuid.uuid1()
     print(f'############# task started: task_id = {task_id}')
+    keystring = "ulsan"
 
-    from crawler.models import Task_log, Course_info
+    from crawler.models import Course_info
 
-    task_log = Task_log(task_id = task_id, name = 'ulsan_course')
-    task_log.save()
+    #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
+    #task_log.save()
 
     settings = ulsan_settings
     settings.ITEM_PIPELINES = {
@@ -77,10 +83,10 @@ def ulsan_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    d = run_spider(settings, task_id)
-    task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
-    task_log.status = 'success'
-    task_log.save()
+    d = run_spider(settings, keyheader=keyheaders[keystring])
+    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
+    #task_log.status = 'success'
+    #task_log.save()
 
     print('############## task ended')
 
@@ -94,11 +100,9 @@ def ulsan_inst_task(self):
     if task_id is None:
         task_id = uuid.uuid1()
     print(f'############# task started: task_id = {task_id}')
+    keystring = "ulsan"
 
-    from crawler.models import Task_log, Inst_info
-
-    task_log = Task_log(task_id = task_id, name = 'ulsan_inst')
-    task_log.save()
+    from crawler.models import Inst_info
 
     settings = ulsaninst_settings
     settings.ITEM_PIPELINES = {
@@ -107,9 +111,6 @@ def ulsan_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    d = run_spider(settings, task_id)
-    task_log.total_cnt = Inst_info.objects.filter(task_id=task_id).count()
-    task_log.status = 'success'
-    task_log.save()
+    d = run_spider(settings, keyheader=keyheaders[keystring])
 
     print('############## task ended')

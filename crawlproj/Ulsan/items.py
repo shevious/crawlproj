@@ -52,3 +52,43 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
+    edu_method = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    enroll_amt = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    receive_period = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    inquiry_tel_no = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    enroll_appl_method = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_location_desc = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    link_url = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_target = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_cycle_content = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_quota_cnt = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )

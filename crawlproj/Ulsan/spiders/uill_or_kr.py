@@ -12,7 +12,7 @@ from ..utils.processors import Item, Field, Text, Number, Price, Date, Url, Imag
 from ..items import Dfd_42Ed_8AabItem, PortiaItem
 
 import pytz, datetime
-import logging
+import re
 
 class UillOrKr(BasePortiaSpider):
     name = "www.uill.or.kr"
@@ -26,7 +26,6 @@ class UillOrKr(BasePortiaSpider):
             LinkExtractor(
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=\d'),
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/view.do\\?rbsIdx=34\\&page=1\\&organIdx=3175\\&idx=EX18651'),
-                # page1 만 하기 위함
                 allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=1$'),
                 deny=()
             ),
@@ -65,6 +64,46 @@ class UillOrKr(BasePortiaSpider):
                     Field(
                         'org',
                         '.cle > table > tr:nth-child(3) > td *::text, .cle > table > tbody > tr:nth-child(1) > td *::text',
+                        []),
+                    Field(
+                        'edu_method',
+                        '.cle > table > tr:nth-child(6) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(4) > td:nth-child(2) *::text',
+                        []),
+                    Field(
+                        'enroll_amt',
+                        '.cle > table > tr:nth-child(5) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(3) > td:nth-child(4) *::text',
+                        []),
+                    Field(
+                        'receive_period',
+                        '.cle > table > tr:nth-child(4) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(2) > td:nth-child(4) *::text',
+                        []),
+                    Field(
+                        'edu_target',
+                        '.cle > table > tr:nth-child(6) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(4) > td:nth-child(4) *::text',
+                        []),
+                    Field(
+                        'edu_cycle_content',
+                        '.cle > table > tr:nth-child(7) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(5) > td:nth-child(2) *::text',
+                        []),
+                    Field(
+                        'edu_quota_cnt',
+                        '.cle > table > tr:nth-child(7) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(5) > td:nth-child(4) *::text',
+                        []),
+                    Field(
+                        'edu_location_desc',
+                        '.cle > table > tr:nth-child(8) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(6) > td:nth-child(2) *::text',
+                        []),
+                    Field(
+                        'inquiry_tel_no',
+                        '.cle > table > tr:nth-child(8) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(6) > td:nth-child(4) *::text',
+                        []),
+                    Field(
+                        'enroll_appl_method',
+                        '.cle > table > tr:nth-child(9) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(7) > td:nth-child(2) *::text',
+                        []),
+                    Field(
+                        'link_url',
+                        '.cle > table > tr:nth-child(10) > td *::text, .cle > table > tbody > tr:nth-child(8) > td *::text',
                         [])
                 ]
             )
@@ -76,9 +115,9 @@ class UillOrKr(BasePortiaSpider):
         for link in links:
             arg = link.re("'(.+?)'")
             url = "http://www.uill.or.kr/UR/info/lecture/" + arg[0]
-            #print('#### yield')
             #print(url)
             yield Request(url, self.parse_item)
+
         for sample in self.items:
             items = []
             try:
@@ -97,9 +136,11 @@ class UillOrKr(BasePortiaSpider):
                         float("%.3f" % (dt.second + dt.microsecond / 1e6)),
                         dt.strftime('%z')
                     )
-                    #print(f'print parse_item in pipeline: title={item["title"]}')
-                    #logging.info(f'####info parse_item in pipeline: title={item["title"]}')
-                    #logging.debug(f'####debug parse_item in pipeline: title={item["title"]}')
+                    match = re.search(r'(?<=organIdx=)([^&]*)&idx=([^&]*)', response.url) 
+                    item['course_id'] = match.group(1) + '_' + match.group(2)
+                    #print('####', item['lecturer'])
+                    #print(f"url = {item['url']}")
+                    #print(f"course_id = {item['course_id']}")
                     yield item
                 break
 
