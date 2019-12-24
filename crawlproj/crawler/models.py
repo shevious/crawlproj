@@ -1,3 +1,4 @@
+
 from django.db import models
 
 class Course_info(models.Model):
@@ -77,3 +78,59 @@ class Task_log(models.Model):
     updated_at = models.DateTimeField(auto_now=True) # 해당 레코드 갱신시 현재 시간 자동저장
     class Meta:
         db_table = "CRAWL_TASK_LOG"
+
+class Inst_info(models.Model):
+    inst_id = models.CharField(null=True, max_length=200)
+    total_cd = models.CharField(null=True, max_length=10) # length correct?
+    sido_cd = models.CharField(null=True, max_length=10)
+    sigungu_cd = models.CharField(null=True, max_length=10)
+    inst_nm = models.CharField(null=True, max_length=400)
+    inst_ceo_pernm = models.CharField(null=True, max_length=30)
+    inst_set_up_main_agent_cd = models.CharField(null=True, max_length=10)
+    inst_operation_form_cd = models.CharField(null=True, max_length=10)
+    zipcode = models.CharField(null=True, max_length=100)
+    addr1 = models.CharField(null=True, max_length=200)
+    addr2 = models.CharField(null=True, max_length=200)
+    street_cd = models.CharField(null=True, max_length=200)
+    street_nm = models.CharField(null=True, max_length=100)
+    building_no = models.CharField(null=True, max_length=100)
+    detail_addr = models.CharField(null=True, max_length=200)
+    manager_pernm = models.CharField(null=True, max_length=200)
+    tel_no = models.CharField(null=True, max_length=100)
+    fax_no = models.CharField(null=True, max_length=100)
+    email = models.CharField(null=True, max_length=100)
+    homepage_url = models.CharField(null=True, max_length=2000)
+    inst_desc = models.CharField(null=True, max_length=2000)
+    establishment_dt = models.DateField(null=True)
+    inst_operation_status_cd = models.CharField(null=True, max_length=10)
+    longitude_val = models.CharField(null=True, max_length=100)
+    latitude_val = models.CharField(null=True, max_length=100)
+    info_mng_inst_id = models.CharField(null=True, max_length=10)
+    info_inp_inst_id = models.CharField(null=True, max_length=10)
+    tag = models.CharField(null=True, max_length=10)
+    loc_leic_appnt_yn = models.CharField(max_length=1)
+    life_study_center_appnt_cd = models.CharField(null=True, max_length=10)
+    incumbenttrain_inst_yn = models.CharField(max_length=1)
+    cb_inst_yn = models.CharField(max_length=1)
+    lfllr_inst_yn = models.CharField(max_length=1)
+    psdc_appnt_inst_yn = models.CharField(max_length=1)
+    basic_lit_edu_yn = models.CharField(max_length=1)
+    achv_sppl_edu_yn = models.CharField(max_length=1)
+    job_ability_edu_yn = models.CharField(max_length=1)
+    culture_art_edu_yn = models.CharField(max_length=1)
+    human_rfnmnt_edu_yn = models.CharField(max_length=1)
+    citizen_join_edu_yn = models.CharField(max_length=1)
+    inst_class1_cd = models.CharField(null=True, max_length=10)
+    inst_class2_cd = models.CharField(null=True, max_length=10)
+    inst_class3_cd = models.CharField(null=True, max_length=10)
+    reg_user_id = models.CharField(null=True, max_length=30)
+    reg_dt = models.DateField(null=True)
+    upd_user_id = models.CharField(null=True, max_length=30)
+    upd_dt = models.DateField(null=True)
+    #del_yn = models.CharField(max_length=1)
+    page_cnt = models.CharField(null=True, max_length=100)
+    page_no = models.CharField(null=True, max_length=100)
+    total_cnt = models.CharField(null=True, max_length=100)
+    task_id = models.CharField(null=True, max_length=100)
+    class Meta:
+        db_table = "CRAWL_INST_INFO"

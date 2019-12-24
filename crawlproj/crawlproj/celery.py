@@ -83,3 +83,33 @@ def ulsan_course_task(self):
     task_log.save()
 
     print('############## task ended')
+
+
+# 울산 기관 정보
+from UlsanInst import settings as ulsaninst_settings
+
+@app.task(bind=True)
+def ulsan_inst_task(self):
+    task_id = current_task.request.id
+    if task_id is None:
+        task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
+
+    from crawler.models import Task_log, Inst_info
+
+    task_log = Task_log(task_id = task_id, name = 'ulsan_inst')
+    task_log.save()
+
+    settings = ulsaninst_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.inst_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    setup()
+    d = run_spider(settings, task_id)
+    task_log.total_cnt = Inst_info.objects.filter(task_id=task_id).count()
+    task_log.status = 'success'
+    task_log.save()
+
+    print('############## task ended')

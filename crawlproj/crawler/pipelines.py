@@ -21,3 +21,22 @@ class course_pipeline(object):
         course_info.save()
         
         return item
+
+
+from crawler.models import Inst_info
+
+class inst_pipeline(object):
+    def process_item(self, item, spider):
+        print(f'process_item in pipeline: title={item["inst_nm"]}')
+        # task_id 를 추가저장
+        task_id = spider.task_id
+        # 유효성 체크
+
+        # db 등록
+        inst_info = Inst_info()
+        inst_info.task_id = task_id
+        inst_info.inst_nm = item['inst_nm']
+        inst_info.inst_id = item['inst_id']
+        inst_info.save()
+
+        return item
