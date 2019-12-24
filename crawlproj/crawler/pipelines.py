@@ -26,7 +26,7 @@ class course_pipeline(object):
         # db 등록
         course_info,flag = Course_info.objects.get_or_create(course_id=course_id)
         course_info.course_nm = item['title']
-        course_info.course_nm = item['org']      #기관명
+        course_info.tag = item['org']      #기관명은 tag field에 저장
         # 나머지 항목들 추가
         course_info.save()
 

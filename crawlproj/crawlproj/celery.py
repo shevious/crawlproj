@@ -56,8 +56,11 @@ def run_spider(settings, keyheader=''):
     return d
 
 # 헤더 정보 및 고유값
+# 아레 header값을 course_id나 inst_id앞에 붙여서 저장함.
 keyheaders = {
-    "ulsan": "UL"
+    "ulsan": "UL",
+    "gangwon": "GW",
+    "gyeongbuk": "GB",
 }
 
 # 울산 강좌 정보
