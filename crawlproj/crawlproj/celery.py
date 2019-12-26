@@ -43,8 +43,14 @@ from celery.platforms import signals
 from celery import current_task
 import uuid
 
+from scrapy import signals
+
+class ItemCount(object):
+    def __init__(self):
+        self.item_scarped_count = 0
+
 @wait_for(timeout=99999)
-def run_spider(settings, keyheader=''):
+def run_spider(settings, keyheader='', itemcount=None):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
@@ -52,7 +58,10 @@ def run_spider(settings, keyheader=''):
     spider = sl.load(sl.list()[0])
     configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
     runner = CrawlerRunner(settings=s)
-    d = runner.crawl(spider, keyheader=keyheader)
+    #crawler = runner.create_crawler(spider)
+    #crawler.signals.connect(scraped, signal=signals.item_scraped)
+    #d = runner.crawl(crawler, keyheader=keyheader, itemcount=itemcount)
+    d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount)
     return d
 
 # 헤더 정보 및 고유값
@@ -62,6 +71,14 @@ keyheaders = {
     "gangwon": "GW",
     "gyeongbuk": "GB",
 }
+conids = {
+    "ulsan": "01",
+    "gangwon": "02",
+    "gyeongbuk": "03",
+}
+
+
+from datetime import date
 
 # 울산 강좌 정보
 from Ulsan import settings as ulsan_settings
@@ -74,10 +91,17 @@ def ulsan_course_task(self):
     print(f'############# task started: task_id = {task_id}')
     keystring = "ulsan"
 
-    from crawler.models import Course_info
+    from crawler.models import Course_info, Con_log
+    from django.db.models import Max
 
     #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
     #task_log.save()
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
 
     settings = ulsan_settings
     settings.ITEM_PIPELINES = {
@@ -86,10 +110,15 @@ def ulsan_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    d = run_spider(settings, keyheader=keyheaders[keystring])
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount)
     #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
     #task_log.status = 'success'
     #task_log.save()
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
 
     print('############## task ended')
 
@@ -105,7 +134,7 @@ def ulsan_inst_task(self):
     print(f'############# task started: task_id = {task_id}')
     keystring = "ulsan"
 
-    from crawler.models import Inst_info
+    from crawler.models import Inst_info, Con_log
 
     settings = ulsaninst_settings
     settings.ITEM_PIPELINES = {

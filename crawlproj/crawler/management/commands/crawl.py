@@ -8,4 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ulsan_course_task()
-        ulsan_inst_task()
+        #ulsan_inst_task()

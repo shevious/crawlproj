@@ -20,6 +20,9 @@ class course_pipeline(object):
             inst_info = None
         '''
         keyheader = spider.keyheader
+        itemcount = spider.itemcount
+        print(f'itemcount = {itemcount.item_scarped_count}')
+        itemcount.item_scarped_count += 1
         course_id = keyheader + item['course_id']
 
         # 유효성 체크
