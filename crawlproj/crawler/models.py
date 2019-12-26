@@ -117,7 +117,7 @@ class Con_log(models.Model):
     con_tm = models.CharField(null=True, max_length=5)
     con_kind_cd = models.CharField(null=True, max_length=10)
     log_desc = models.CharField(null=True, max_length=2000)
-    reg_dt = models.DateField(null=True)
+    reg_dt = models.DateTimeField(null=True)
     con_rework_tm = models.CharField(null=True, max_length=5)
     work_kind_cd = models.CharField(null=True, max_length=5, default='SITE')
     con_status_cd = models.CharField(null=True, max_length=5, default='ERROR')
