@@ -45,12 +45,30 @@ import uuid
 
 from scrapy import signals
 
-class ItemCount(object):
+class SigHandler(object):
     def __init__(self):
-        self.item_scarped_count = 0
+        self.item_scraped_count = 0
+        #self.crawler = None
+
+    def connect(self, crawler):
+        #print('###### signal connect')
+        #crawler.signals.connect(self.spider_closed, signal=signals.spider_closed)
+        crawler.signals.connect(self.item_scraped, signal=signals.item_scraped)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def spider_closed(self, spider):
+        #print('###### spider closed')
+        pass
+
+    def item_scraped(self, item, spider):
+        #print('###### item scraped signal')
+        self.item_scraped_count += 1
 
 @wait_for(timeout=99999)
-def run_spider(settings, keyheader='', itemcount=None, conid=''):
+def run_spider(settings, sighandler, keyheader='', conid=''):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
@@ -58,10 +76,12 @@ def run_spider(settings, keyheader='', itemcount=None, conid=''):
     spider = sl.load(sl.list()[0])
     configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
     runner = CrawlerRunner(settings=s)
-    #crawler = runner.create_crawler(spider)
-    #crawler.signals.connect(scraped, signal=signals.item_scraped)
-    #d = runner.crawl(crawler, keyheader=keyheader, itemcount=itemcount)
-    d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount, conid=conid)
+
+    crawler = runner.create_crawler(spider)
+    if sighandler != None:
+        sighandler.connect(crawler)
+    d = runner.crawl(crawler, keyheader=keyheader, conid=conid)
+    #d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount)
     return d
 
 # 헤더 정보 및 고유값
@@ -78,7 +98,10 @@ conids = {
 }
 
 
-from datetime import date
+from datetime import date, datetime
+#from pytz import timezone
+from django.utils import timezone
+from time import strftime
 
 # 울산 강좌 정보
 from Ulsan import settings as ulsan_settings
@@ -100,6 +123,8 @@ def ulsan_course_task(self):
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'COURSE'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -110,18 +135,14 @@ def ulsan_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
-    #task_log.status = 'success'
-    #task_log.save()
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
 
     print('############## task ended')
-
 
 
 # 울산 기관 정보
@@ -138,23 +159,25 @@ def ulsan_inst_task(self):
     from crawler.models import Inst_info, Con_log
     from django.db.models import Max
 
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))
-    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    con_log = Con_log(con_log_id=con_log_id)
-    con_log.con_id = conids[keystring]
-    con_log.save()
-
     settings = ulsaninst_settings
     settings.ITEM_PIPELINES = {
         'crawler.pipelines.inst_pipeline': 300,
     }
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'INSTI'
+    con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -177,7 +200,10 @@ def gangwon_inst_task(self):
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'INSTI'
     con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
 
     settings = gangwonInst_settings
     settings.ITEM_PIPELINES = {
@@ -186,10 +212,10 @@ def gangwon_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -214,6 +240,8 @@ def gangwon_course_task(self):
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'COURSE'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -224,13 +252,10 @@ def gangwon_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
-    #task_log.status = 'success'
-    #task_log.save()
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
 
@@ -255,7 +280,10 @@ def gyeongbuk_inst_task(self):
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'INSTI'
     con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
 
     settings = gyeongbukinst_settings
     settings.ITEM_PIPELINES = {
@@ -264,10 +292,10 @@ def gyeongbuk_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -292,6 +320,8 @@ def gyeongbuk_course_task(self):
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
+    con_log.con_tm = datetime.now().strftime('%H:%M')
+    con_log.con_kind_cd = 'COURSE'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -302,14 +332,10 @@ def gyeongbuk_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
-    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
-    #task_log.status = 'success'
-    #task_log.save()
-    con_log.reg_dt = date.today()
-    con_log.log_desc = f'total count'
+    sighandler = SigHandler()
+    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    con_log.reg_dt = timezone.now()
+    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
-
     print('############## task ended')

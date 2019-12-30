@@ -20,10 +20,10 @@ class course_pipeline(object):
             inst_info = None
         '''
         keyheader = spider.keyheader
-        itemcount = spider.itemcount
+        #itemcount = spider.itemcount
         conid = spider.conid
-        print(f'itemcount = {itemcount.item_scarped_count}')
-        itemcount.item_scarped_count += 1
+        #print(f'itemcount = {itemcount.item_scarped_count}')
+        #itemcount.item_scarped_count += 1
         course_id = keyheader + item['course_id']
 
         # 유효성 체크
@@ -61,10 +61,10 @@ class inst_pipeline(object):
     def process_item(self, item, spider):
         print(f'process_item in pipeline: id={item["inst_id"]}, title={item["inst_nm"]}')
         keyheader = spider.keyheader
-        itemcount = spider.itemcount
+        #itemcount = spider.itemcount
         conid = spider.conid
-        print(f'itemcount = {itemcount.item_scarped_count}')
-        itemcount.item_scarped_count += 1
+        #print(f'itemcount = {itemcount.item_scarped_count}')
+        #itemcount.item_scarped_count += 1
         inst_id = keyheader + item['inst_id']
 
         # db 등록
