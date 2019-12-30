@@ -50,15 +50,15 @@ class UillOrKr(BasePortiaSpider):
                 '#bbs_box02_view',
                 [
                     Field(
-                        'title',
+                        'course_nm',
                         'h2 *::text',
                         []),
                     Field(
-                        'lecturer',
+                        'teacher_pernm',
                         '.cle > table > tr:nth-child(5) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(3) > td:nth-child(2) *::text',
                         []),
                     Field(
-                        'period',
+                        'course_period',
                         '.cle > table > tr:nth-child(4) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(2) > td:nth-child(2) *::text',
                         []),
                     Field(
@@ -138,6 +138,17 @@ class UillOrKr(BasePortiaSpider):
                     )
                     match = re.search(r'(?<=organIdx=)([^&]*)&idx=([^&]*)', response.url) 
                     item['course_id'] = match.group(1) + '_' + match.group(2)
+                    course_period = re.match(r'(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
+                                             re.sub('[ \xa0]', '', item['course_period']))  # 강좌기간
+                    receive_period = re.match(r'(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
+                                              re.sub('[ \xa0]', '', item['receive_period']))  # 접수기간
+                    if course_period != None:  # 강좌시작일, 강좌종료일
+                        item['course_start_dt'] = course_period.group(1)
+                        item['course_end_dt'] = course_period.group(2)
+                    if receive_period != None:  # 접수시작일, 접수종료일
+                        item['receive_start_dt'] = receive_period.group(1)
+                        item['receive_end_dt'] = receive_period.group(2)
+                    item['course_desc'] = None
                     #print('####', item['lecturer'])
                     #print(f"url = {item['url']}")
                     #print(f"course_id = {item['course_id']}")

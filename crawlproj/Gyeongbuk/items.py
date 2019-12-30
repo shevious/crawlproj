@@ -31,44 +31,8 @@ class PortiaItem(scrapy.Item):
         return string
 
 
-class Dfd_42Ed_8AabItem(PortiaItem):
-    course_nm = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    org = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    course_period = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    registerperiod = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    teacher_pernm = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    edu_method = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    enroll_amt = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    receive_period = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    inquiry_tel_no = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    enroll_appl_method = scrapy.Field(
+class CourseInfoItem(PortiaItem):
+    edu_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
@@ -76,11 +40,23 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
+    course_period = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    all_eval_accept_inst = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_quota_cnt = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
     link_url = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_target = scrapy.Field(
+    enroll_appl_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
@@ -88,7 +64,59 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_quota_cnt = scrapy.Field(
+    job_ability_course_yn = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    cb_eval_accept_yn = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    hrg_handicap_supp_yn = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    receive_period = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    lang_cd = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    vsl_handicap_supp_yn = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    edu_target_cd = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    enroll_status = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    org = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    course_desc = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    course_nm = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    enroll_amt = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    inquiry_tel_no = scrapy.Field(
+        input_processor=Text(),
+        output_processor=Join(),
+    )
+    teacher_pernm = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )

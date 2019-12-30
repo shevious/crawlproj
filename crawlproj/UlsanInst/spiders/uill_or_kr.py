@@ -22,7 +22,8 @@ class UillOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=\d'),
+                #$allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=\d'),
+                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=1$'),
                 deny=()
             ),
             callback='parse_item',
@@ -112,9 +113,33 @@ class UillOrKr(BasePortiaSpider):
                 if items:
                     for item in items:
                         #item['url'] = response.url
-                        organidx = (re.search(r"organIdx=\d*", itemUrl)).group()
+                        organidx = re.search(r"organIdx=([^&]*)", itemUrl)
                         item['url'] = itemUrl       #URL
-                        item['inst_id'] = organidx.replace("organIdx=", "")     #기관ID
+                        item['inst_id'] = organidx.group(1)     #기관ID
+
+                        address = re.search(r"\((.*?)\).(.*)", item['address'])
+
+                        if address == None:
+                            item['zipcode'] = None
+                            item['addr1'] = item['address']
+                        else:
+                            item['zipcode'] = address.group(1)
+                            item['addr1'] = address.group(2)
+
+                        try:
+                            item['inst_desc'] = re.sub('[\xa0]', ' ', item['inst_desc'])
+                        except KeyError:
+                            item['inst_desc'] = None
+
+                        # 초기값
+                        keyarray = ['inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',
+                                    'establishment_dt', 'inst_set_up_main_agent_cd', 'inst_operation_form_cd',
+                                    'inst_operation_status_cd']
+                        for keyitem in keyarray:
+                            try:
+                                item[keyitem] = item[keyitem].strip()
+                            except KeyError:
+                                item[keyitem] = None
 
                         dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                         item['date'] =  "%s:%.3f%s" % (

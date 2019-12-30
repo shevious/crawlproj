@@ -31,64 +31,60 @@ class PortiaItem(scrapy.Item):
         return string
 
 
-class Dfd_42Ed_8AabItem(PortiaItem):
-    course_nm = scrapy.Field(
+class InstItemItem(PortiaItem):
+    inst_set_up_main_agent = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    org = scrapy.Field(
+    manager_pernm = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    course_period = scrapy.Field(
+    fax_no = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    registerperiod = scrapy.Field(
+    inst_operation_status_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    teacher_pernm = scrapy.Field(
+    tel_no = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_method = scrapy.Field(
+    INST_SET_UP_MAIN_AGENT_CD = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    enroll_amt = scrapy.Field(
+    establishment_dt = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    receive_period = scrapy.Field(
+    address = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    inquiry_tel_no = scrapy.Field(
+    homepage_url = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    enroll_appl_method = scrapy.Field(
+    inst_ceo_pernm = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_location_desc = scrapy.Field(
+    inst_nm = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    link_url = scrapy.Field(
+    inst_desc = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_target = scrapy.Field(
+    email = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_cycle_content = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    edu_quota_cnt = scrapy.Field(
+    inst_operation_form = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )

@@ -50,7 +50,7 @@ class ItemCount(object):
         self.item_scarped_count = 0
 
 @wait_for(timeout=99999)
-def run_spider(settings, keyheader='', itemcount=None):
+def run_spider(settings, keyheader='', itemcount=None, conid=''):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
@@ -61,7 +61,7 @@ def run_spider(settings, keyheader='', itemcount=None):
     #crawler = runner.create_crawler(spider)
     #crawler.signals.connect(scraped, signal=signals.item_scraped)
     #d = runner.crawl(crawler, keyheader=keyheader, itemcount=itemcount)
-    d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount)
+    d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount, conid=conid)
     return d
 
 # 헤더 정보 및 고유값
@@ -111,7 +111,7 @@ def ulsan_course_task(self):
 
     setup()
     itemcount = ItemCount()
-    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount)
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
     #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
     #task_log.status = 'success'
     #task_log.save()
@@ -121,6 +121,7 @@ def ulsan_course_task(self):
     con_log.save()
 
     print('############## task ended')
+
 
 
 # 울산 기관 정보
@@ -135,6 +136,13 @@ def ulsan_inst_task(self):
     keystring = "ulsan"
 
     from crawler.models import Inst_info, Con_log
+    from django.db.models import Max
+
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
 
     settings = ulsaninst_settings
     settings.ITEM_PIPELINES = {
@@ -143,6 +151,165 @@ def ulsan_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    d = run_spider(settings, keyheader=keyheaders[keystring])
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
+    print('############## task ended')
+
+# 강원 기관 정보
+from GangwonInst import settings as gangwonInst_settings
+
+@app.task(bind=True)
+def gangwon_inst_task(self):
+    task_id = current_task.request.id
+    if task_id is None:
+        task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
+    keystring = "gangwon"
+
+    from crawler.models import Inst_info, Con_log
+    from django.db.models import Max
+
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
+
+    settings = gangwonInst_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.inst_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    setup()
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
+    print('############## task ended')
+
+# 강원 강좌 정보
+from Gangwon import settings as gangwon_settings
+
+@app.task(bind=True)
+def gangwon_course_task(self):
+    task_id = current_task.request.id
+    if task_id is None:
+        task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
+    keystring = "gangwon"
+
+    from crawler.models import Course_info, Con_log
+    from django.db.models import Max
+
+    #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
+    #task_log.save()
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
+
+    settings = gangwon_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.course_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    setup()
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
+    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
+    #task_log.status = 'success'
+    #task_log.save()
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
+
+    print('############## task ended')
+
+
+# 경북 기관 정보
+from GyeongbukInst import settings as gyeongbukinst_settings
+
+@app.task(bind=True)
+def gyeongbuk_inst_task(self):
+    task_id = current_task.request.id
+    if task_id is None:
+        task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
+    keystring = "gyeongbuk"
+
+    from crawler.models import Inst_info, Con_log
+    from django.db.models import Max
+
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
+
+    settings = gyeongbukinst_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.inst_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    setup()
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
+    print('############## task ended')
+
+# 울산 강좌 정보
+from Gyeongbuk import settings as gyeongbuk_settings
+
+@app.task(bind=True)
+def gyeongbuk_course_task(self):
+    task_id = current_task.request.id
+    if task_id is None:
+        task_id = uuid.uuid1()
+    print(f'############# task started: task_id = {task_id}')
+    keystring = "gyeongbuk"
+
+    from crawler.models import Course_info, Con_log
+    from django.db.models import Max
+
+    #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
+    #task_log.save()
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))
+    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    con_log = Con_log(con_log_id=con_log_id)
+    con_log.con_id = conids[keystring]
+    con_log.save()
+    print(f'##### max_log_id = {con_log_id}')
+
+    settings = gyeongbuk_settings
+    settings.ITEM_PIPELINES = {
+        'crawler.pipelines.course_pipeline': 300,
+    }
+    #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    setup()
+    itemcount = ItemCount()
+    d = run_spider(settings, keyheader=keyheaders[keystring], itemcount=itemcount, conid=conids[keystring])
+    #task_log.total_cnt = Course_info.objects.filter(task_id=task_id).count()
+    #task_log.status = 'success'
+    #task_log.save()
+    con_log.reg_dt = date.today()
+    con_log.log_desc = f'total count'
+    con_log.con_status_cd = 'SUCCESS'
+    con_log.save()
 
     print('############## task ended')
