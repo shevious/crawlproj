@@ -156,7 +156,7 @@ class GileOrKr(BasePortiaSpider):
                         idxs = re.search(r"organIdx=([^&]*)&lecIdx=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
                         # item['inst_id'] = idxs.group(1) + '_' + idxs.group(2)  # 기관ID
-                        item['course_id'] = idxs.group(1) + '_' + idxs.group(2)  # 강좌ID
+                        item['course_id'] = idxs.group(2)  # 강좌ID
                         item['enroll_amt'] = (re.sub(r'\([^)]*\)', '', item['enroll_amt'])).strip()   # 수강료
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
                                                  re.sub('[ ]', '', item['course_period']))  # 강좌기간

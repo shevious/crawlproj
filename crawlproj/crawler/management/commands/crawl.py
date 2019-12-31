@@ -12,8 +12,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         #ulsan_course_task()
-        ulsan_inst_task()
+        #ulsan_inst_task()
         #gangwon_inst_task()
         #gangwon_course_task()
-        #gyeongbuk_inst_task()
+        gyeongbuk_inst_task()
         #gyeongbuk_course_task()

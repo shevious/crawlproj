@@ -18,7 +18,7 @@ class ERoomOrKr(BasePortiaSpider):
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+            'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
     ]
     rules = [
         Rule(
@@ -63,7 +63,7 @@ class ERoomOrKr(BasePortiaSpider):
                         '.input_01 > tr:nth-child(3) > td:nth-child(4) *::text, .input_01 > tbody > tr:nth-child(3) > td:nth-child(4) *::text',
                         []),
                     Field(
-                        'edu_method',
+                        'edu_method_cd',
                         '.input_01 > tr:nth-child(4) > td:nth-child(2) *::text, .input_01 > tbody > tr:nth-child(4) > td:nth-child(2) *::text',
                         []),
                     Field(
@@ -87,8 +87,8 @@ class ERoomOrKr(BasePortiaSpider):
                         '.input_01 > tr:nth-child(6) > td:nth-child(4) > .icon_img::attr(alt), .input_01 > tbody > tr:nth-child(6) > td:nth-child(4) > .icon_img::attr(alt)',
                         []),
                     Field(
-                        'enroll_appl_method',
-                        '.input_01 > tr:nth-child(7) > td > a > *.icon_img::attr(alt), .input_01 > tbody > tr:nth-child(7) > td > a > .icon_img::attr(alt)',
+                        'enroll_appl_method_cd',
+                        '.input_01 > tr:nth-child(7) > td > a > *.icon_img::attr(src), .input_01 > tbody > tr:nth-child(7) > td > a > .icon_img::attr(src)',
                         []),
                     Field(
                         'job_ability_course',
@@ -142,13 +142,12 @@ class ERoomOrKr(BasePortiaSpider):
                 #print(page[1])
                 #n = int(page[1])
                 #print(n)
-                #for i in range(1, int(page[1])):
-                for i in range(1, 2):
+                for i in range(1, int(page[1])+1):
+                #for i in range(1, 5):
                     url = 'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=' \
                         +str(i) \
                         +'&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-                    print('########')
-                    print(url)
+                    #print(url)
                     yield Request(url, self.parse_item)
 
         #print(links)
@@ -173,8 +172,6 @@ class ERoomOrKr(BasePortiaSpider):
                         item['course_id'] = leccodeidx.group(1)  # 강좌ID
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})', re.sub('[ ]', '', item['course_period']))   # 강좌기간
                         register_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',re.sub('[ ]', '', item['register_period']))  # 접수기간
-                        item['title'] = item['course_nm']
-                        print("item['title'] :", item['title'])
 
                         if course_period != None:   # 강좌시작일, 강좌종료일
                             item['course_start_dt'] = course_period.group(1)
@@ -186,11 +183,11 @@ class ERoomOrKr(BasePortiaSpider):
                             item['job_ability_course_yn'] = 'Y'
                         else:
                             item['job_ability_course_yn'] = 'N'
-                        if item['cb_eval_accept'] == '인정기관': # 직업능력강좌여부
+                        if item['cb_eval_accept'] == '인정기관': # 학점은행제평가인정여부
                             item['cb_eval_accept_yn'] = 'Y'
                         else:
                             item['cb_eval_accept_yn'] = 'N'
-                        if item['all_eval_accept'] == '인정기관':  # 직업능력강좌여부
+                        if item['all_eval_accept'] == '인정기관':  # 평생학습계좌제평가인정여부
                             item['all_eval_accept_yn'] = 'Y'
                         else:
                             item['all_eval_accept_yn'] = 'N'
@@ -202,7 +199,20 @@ class ERoomOrKr(BasePortiaSpider):
                             item['hrg_handicap_supp_yn'] = 'Y'
                         else:
                             item['hrg_handicap_supp_yn'] = 'N'
-                        item['link_url'] = None  # like_url없음
+
+                        # 초기값
+                        keyarray = ['teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                                    , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'edu_quota_cnt'
+                                    , 'lang_cd', 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                        for keyitem in keyarray:
+                            try:
+                                item[keyitem] = item[keyitem].strip()
+                                if keyitem == 'lang_cd':
+                                    item[keyitem] = item[keyitem].lower()
+                                if keyitem == 'enroll_appl_method_cd':
+                                    item['enroll_appl_method_cd'] = re.sub('.gif', '', re.sub(r'\S*_', '', item['enroll_appl_method_cd']))
+                            except KeyError:
+                                item[keyitem] = None
 
                         dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                         item['date'] = "%s:%.3f%s" % (

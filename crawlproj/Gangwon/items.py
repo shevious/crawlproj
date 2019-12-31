@@ -100,11 +100,11 @@ class ItemnameItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    enroll_appl_method = scrapy.Field(
+    enroll_appl_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_method = scrapy.Field(
+    edu_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )

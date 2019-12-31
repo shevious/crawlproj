@@ -22,8 +22,8 @@ class UillOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                #$allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=\d'),
-                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=1$'),
+                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=\d'),
+                #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=1$'),
                 deny=()
             ),
             callback='parse_item',
@@ -126,15 +126,58 @@ class UillOrKr(BasePortiaSpider):
                             item['zipcode'] = address.group(1)
                             item['addr1'] = address.group(2)
 
-                        try:
+                        try:    # 기관소개
                             item['inst_desc'] = re.sub('[\xa0]', ' ', item['inst_desc'])
                         except KeyError:
                             item['inst_desc'] = None
 
+                        try:    # 기관설립주체
+                            if item['inst_set_up_main_agent'] == '법인':
+                                item['inst_set_up_main_agent_cd'] = '01'
+                            elif item['inst_set_up_main_agent'] == '개인':
+                                item['inst_set_up_main_agent_cd'] = '02'
+                            elif item['inst_set_up_main_agent'] == '국가/지자체':
+                                item['inst_set_up_main_agent_cd'] = '03'
+                            elif item['inst_set_up_main_agent'] == '기타':
+                                item['inst_set_up_main_agent_cd'] = '04'
+                            elif item['inst_set_up_main_agent'].strip() == '':
+                                item['inst_set_up_main_agent_cd'] = None
+                            else:   # 그 외
+                                item['inst_set_up_main_agent_cd'] = '05'
+                        except KeyError:
+                            item['inst_set_up_main_agent_cd'] = None
+
+                        try:    # 기관운영상태
+                            if item['inst_operation_status_cd'] == '운영중':
+                                item['inst_operation_status_cd'] = '01'
+                            elif item['inst_operation_status_cd'] == '연락두절':
+                                item['inst_operation_status_cd'] = '02'
+                            elif item['inst_operation_status_cd'] == '폐원':
+                                item['inst_operation_status_cd'] = '03'
+                            elif item['inst_operation_status_cd'].strip() == '':
+                               item['inst_operation_status_cd'] = None
+                            else:   # 그 외
+                                item['inst_operation_status_cd'] = '04'
+                        except KeyError:
+                            item['inst_operation_status_cd'] = None
+
+                        try:    # 운영형태
+                            if item['inst_operation_form_cd'] == '직영':
+                                item['inst_operation_form_cd'] = '01'
+                            elif item['inst_operation_form'] == '위탁':
+                                item['inst_operation_form_cd'] = '02'
+                            elif item['inst_operation_form'] == '병행':
+                                item['inst_operation_form_cd'] = '03'
+                            elif item['inst_operation_form_cd'].strip() == '':
+                                item['inst_operation_form_cd'] = None
+                            else:   # 그 외
+                                item['inst_operation_form_cd'] = '04'
+                        except KeyError:
+                            item['inst_operation_form_cd'] = None
+
                         # 초기값
                         keyarray = ['inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',
-                                    'establishment_dt', 'inst_set_up_main_agent_cd', 'inst_operation_form_cd',
-                                    'inst_operation_status_cd']
+                                    'establishment_dt']
                         for keyitem in keyarray:
                             try:
                                 item[keyitem] = item[keyitem].strip()

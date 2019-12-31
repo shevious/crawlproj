@@ -39,20 +39,21 @@ class course_pipeline(object):
         course_info.receive_end_dt = item['receive_end_dt']
         course_info.teacher_pernm = item['teacher_pernm']
         course_info.enroll_amt = item['enroll_amt']
-        #course_info.edu_method_cd = item['edu_method_cd']      # 교육방법CD
-        #course_info.edu_target_cd = item['edu_target_cd']       # 교육대상CD
+        course_info.edu_method_cd = item['edu_method_cd']      # 교육방법CD
+        course_info.edu_target_cd = item['edu_target_cd']       # 교육대상CD
         course_info.edu_cycle_content = item['edu_cycle_content']  # 교육주기
         course_info.edu_quota_cnt = item['edu_quota_cnt']  # 교육정원
         course_info.edu_location_desc = item['edu_location_desc']  # 교육장소
         course_info.inquiry_tel_no = item['inquiry_tel_no']  # 교육문의전화
+        course_info.enroll_appl_method_cd = item['enroll_appl_method_cd']  # 수강신청방법
         course_info.link_url = item['link_url']  # URl
         course_info.course_desc = item['course_desc']  # 교육설명
-        #course_info.job_ability_course_yn = item['job_ability_course_yn']  # 직업능력개발훈련비지원여부
-        #course_info.cb_eval_accept_yn = item['cb_eval_accept_yn']  # 학점은행제평가인정여부
-        #course_info.all_eval_accept_yn = item['all_eval_accept_yn']  # 평생학습계좌제평가인정기관여부
-        #course_info.lang_cd = item['lang_cd']  # 언어
-        #course_info.vsl_handicap_supp_yn = item['vsl_handicap_supp_yn']  # 시각장애지원여부
-        #course_info.hrg_handicap_supp_yn = item['hrg_handicap_supp_yn']  # 청각장애지원여부
+        course_info.job_ability_course_yn = item['job_ability_course_yn']  # 직업능력개발훈련비지원여부
+        course_info.cb_eval_accept_yn = item['cb_eval_accept_yn']  # 학점은행제평가인정여부
+        course_info.all_eval_accept_yn = item['all_eval_accept_yn']  # 평생학습계좌제평가인정기관여부
+        course_info.lang_cd = item['lang_cd']  # 언어
+        course_info.vsl_handicap_supp_yn = item['vsl_handicap_supp_yn']  # 시각장애지원여부
+        course_info.hrg_handicap_supp_yn = item['hrg_handicap_supp_yn']  # 청각장애지원여부
         course_info.save()
 
         return item
@@ -74,8 +75,8 @@ class inst_pipeline(object):
         inst_info.con_id = conid
         # 나머지 항목들 추가
         inst_info.inst_ceo_pernm = item['inst_ceo_pernm']
-        #inst_info.inst_set_up_main_agent_cd = item['inst_set_up_main_agent_cd']   # 기관설립주체코드
-        #inst_info.inst_operation_form_cd = item['inst_operation_form_cd']  # 기관운영형태코드
+        inst_info.inst_set_up_main_agent_cd = item['inst_set_up_main_agent_cd']   # 기관설립주체코드
+        inst_info.inst_operation_form_cd = item['inst_operation_form_cd']  # 기관운영형태코드
         inst_info.zipcode = item['zipcode']
         inst_info.addr1 = item['addr1']
         inst_info.tel_no = item['tel_no']
@@ -84,7 +85,7 @@ class inst_pipeline(object):
         inst_info.homepage_url = item['homepage_url']
         inst_info.inst_desc = item['inst_desc']
         inst_info.establishment_dt = item['establishment_dt']
-        #inst_info.inst_operation_status_cd = item['inst_operation_status_cd'] # 기관운영상태코드
+        inst_info.inst_operation_status_cd = item['inst_operation_status_cd'] # 기관운영상태코드
         inst_info.save()
 
         return item
