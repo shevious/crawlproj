@@ -24,9 +24,9 @@ class UillOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=\d'),
+                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=\d'),
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/view.do\\?rbsIdx=34\\&page=1\\&organIdx=3175\\&idx=EX18651'),
-                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=1$'),
+                #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=1$'),
                 deny=()
             ),
             callback='parse_item',
@@ -66,7 +66,7 @@ class UillOrKr(BasePortiaSpider):
                         '.cle > table > tr:nth-child(3) > td *::text, .cle > table > tbody > tr:nth-child(1) > td *::text',
                         []),
                     Field(
-                        'edu_method',
+                        'edu_method_cd',
                         '.cle > table > tr:nth-child(6) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(4) > td:nth-child(2) *::text',
                         []),
                     Field(
@@ -78,7 +78,7 @@ class UillOrKr(BasePortiaSpider):
                         '.cle > table > tr:nth-child(4) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(2) > td:nth-child(4) *::text',
                         []),
                     Field(
-                        'edu_target',
+                        'edu_target_cd',
                         '.cle > table > tr:nth-child(6) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(4) > td:nth-child(4) *::text',
                         []),
                     Field(
@@ -148,10 +148,20 @@ class UillOrKr(BasePortiaSpider):
                     if receive_period != None:  # 접수시작일, 접수종료일
                         item['receive_start_dt'] = receive_period.group(1)
                         item['receive_end_dt'] = receive_period.group(2)
-                    item['course_desc'] = None
-                    #print('####', item['lecturer'])
-                    #print(f"url = {item['url']}")
-                    #print(f"course_id = {item['course_id']}")
+
+                    # 초기값
+                    keyarray = ['course_nm', 'org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                        , 'course_start_dt', 'course_end_dt', 'receive_start_dt', 'receive_end_dt'
+                        , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'lang_cd', 'job_ability_course_yn'
+                        ,'cb_eval_accept_yn', 'all_eval_accept_yn', 'vsl_handicap_supp_yn', 'hrg_handicap_supp_yn'
+                        , 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                    for keyitem in keyarray:
+                        try:
+                            item[keyitem] = item[keyitem].strip()
+                            if keyitem == 'edu_method_cd':
+                                item[keyitem] = (re.sub(r'\([^)]*\)', '', item[keyitem])).strip()   # 수강료
+                        except KeyError:
+                            item[keyitem] = None
                     yield item
                 break
 

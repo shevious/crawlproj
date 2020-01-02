@@ -120,16 +120,12 @@ class ERoomOrKr(BasePortiaSpider):
                         [])])]]
 
     def parse_item(self, response):
-        #print('######')
-        #print(response.body)
+
         links = response.xpath("//a/@onclick[contains(.,'selectRow')]")
         for link in links:
             #num = link.re("'(.*)'")
             num = link.re("\((.+?)\)")
-            #print(num[0])
             url = 'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode='+num[0]+'&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-            #print(link)
-            #print(url)
             yield Request(url, self.parse_item)
             #print(link.data)
         links = response.xpath("//script")
@@ -201,7 +197,7 @@ class ERoomOrKr(BasePortiaSpider):
                             item['hrg_handicap_supp_yn'] = 'N'
 
                         # 초기값
-                        keyarray = ['teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                        keyarray = ['course_nm', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                                     , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'edu_quota_cnt'
                                     , 'lang_cd', 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
                         for keyitem in keyarray:

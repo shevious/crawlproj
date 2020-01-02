@@ -42,7 +42,7 @@ from celery.platforms import signals
 
 from celery import current_task
 import uuid
-
+import logging
 from scrapy import signals
 
 class SigHandler(object):
@@ -133,6 +133,9 @@ def ulsan_course_task(self):
         'crawler.pipelines.course_pipeline': 300,
     }
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+
+    #settings.LOG_FILE = 'ulsan_course_logfile.log'
+    #settings.LOG_LEVEL = logging.ERROR
 
     setup()
     sighandler = SigHandler()
@@ -250,7 +253,7 @@ def gangwon_course_task(self):
         'crawler.pipelines.course_pipeline': 300,
     }
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
-
+    #settings.LOG_FILE = 'gangwon_course_logfile.log'
     setup()
     sighandler = SigHandler()
     d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
@@ -330,6 +333,8 @@ def gyeongbuk_course_task(self):
         'crawler.pipelines.course_pipeline': 300,
     }
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
+    #settings.LOG_FILE = 'gyeongbuk_course_logfile.log'
+    #settings.LOG_LEVEL = logging.ERROR
 
     setup()
     sighandler = SigHandler()

@@ -52,7 +52,7 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_method = scrapy.Field(
+    edu_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
@@ -80,7 +80,7 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    edu_target = scrapy.Field(
+    edu_target_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )

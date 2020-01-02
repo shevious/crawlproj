@@ -22,8 +22,8 @@ class GileOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\d'),
-                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=1$'),
+                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\d'),
+                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=1$'),
                 deny=()
             ),
             callback='parse_item',
@@ -90,10 +90,6 @@ class GileOrKr(BasePortiaSpider):
                         'tr:nth-child(7) > td:nth-child(2) *::text, tbody > tr:nth-child(7) > td:nth-child(2) *::text',
                         []),
                     Field(
-                        'enroll_status',
-                        'tr:nth-child(7) > td:nth-child(4) *::text, tbody > tr:nth-child(7) > td:nth-child(4) *::text',
-                        []),
-                    Field(
                         'job_ability_course_yn',
                         'tr:nth-child(8) > td:nth-child(2) *::text, tbody > tr:nth-child(8) > td:nth-child(2) *::text',
                         []),
@@ -102,7 +98,7 @@ class GileOrKr(BasePortiaSpider):
                         'tr:nth-child(8) > td:nth-child(4) *::text, tbody > tr:nth-child(8) > td:nth-child(4) *::text',
                         []),
                     Field(
-                        'all_eval_accept_inst',
+                        'all_eval_accept_yn',
                         'tr:nth-child(9) > td:nth-child(2) *::text, tbody > tr:nth-child(9) > td:nth-child(2) *::text',
                         []),
                     Field(
@@ -136,6 +132,7 @@ class GileOrKr(BasePortiaSpider):
             #test = link.re("'(.+?)'")
             #테스트용 if문 (1페이지만)
             #if (href.find("page=1&")) > int(0) :
+            #print("href : ", href)
             url = "http://www.gile.or.kr/web/lecture/" + href
             yield Request(url, self.parse_item)
 
@@ -157,7 +154,7 @@ class GileOrKr(BasePortiaSpider):
                         item['url'] = itemUrl  # URL
                         # item['inst_id'] = idxs.group(1) + '_' + idxs.group(2)  # 기관ID
                         item['course_id'] = idxs.group(2)  # 강좌ID
-                        item['enroll_amt'] = (re.sub(r'\([^)]*\)', '', item['enroll_amt'])).strip()   # 수강료
+                        item['enroll_amt'] = (re.sub(r'\(.*\)', '', item['enroll_amt'])).strip()   # 수강료
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
                                                  re.sub('[ ]', '', item['course_period']))  # 강좌기간
                         receive_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
@@ -169,7 +166,7 @@ class GileOrKr(BasePortiaSpider):
                         if receive_period != None: # 접수시작일, 접수종료일
                             item['receive_start_dt'] = receive_period.group(1)
                             item['receive_end_dt'] = receive_period.group(2)
-                        if item['all_eval_accept_inst'] == '인정기관':  # 평생학습계좌제평가인정여부
+                        if item['all_eval_accept_yn'] == '인정기관':  # 평생학습계좌제평가인정여부
                             item['all_eval_accept_yn'] = 'Y'
                         else:
                             item['all_eval_accept_yn'] = 'N'
@@ -189,6 +186,25 @@ class GileOrKr(BasePortiaSpider):
                             item['hrg_handicap_supp_yn'] = 'Y'
                         else:
                             item['hrg_handicap_supp_yn'] = 'N'
+
+                        # 초기값
+                        keyarray = ['course_nm', 'org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                                    , 'course_start_dt', 'course_end_dt', 'receive_start_dt', 'receive_end_dt'
+                                    , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'lang_cd'
+                                    , 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                        for keyitem in keyarray:
+                            try:
+                                item[keyitem] = item[keyitem].strip()
+                                if keyitem == 'lang_cd':
+                                    item[keyitem] = item[keyitem].lower()
+                                elif keyitem == 'edu_method_cd':
+                                    item[keyitem] = (item[keyitem].replace('Corrente', '')).strip()
+                                elif keyitem == 'enroll_appl_method_cd':
+                                    item[keyitem] = item[keyitem].replace('방문접수', 'visit')
+                                    item[keyitem] = item[keyitem].replace('온라인접수', 'online')
+                                    item[keyitem] = (item[keyitem].replace('전화접수', 'call')).replace('/', '')
+                            except KeyError:
+                                item[keyitem] = None
 
                         dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                         item['date'] = "%s:%.3f%s" % (

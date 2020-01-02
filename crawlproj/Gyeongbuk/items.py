@@ -44,7 +44,7 @@ class CourseInfoItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    all_eval_accept_inst = scrapy.Field(
+    all_eval_accept_yn = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
@@ -89,10 +89,6 @@ class CourseInfoItem(PortiaItem):
         output_processor=Join(),
     )
     edu_target_cd = scrapy.Field(
-        input_processor=Text(),
-        output_processor=Join(),
-    )
-    enroll_status = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )
