@@ -28,10 +28,12 @@ class course_pipeline(object):
 
         # 유효성 체크
         # db 등록
-        course_info,flag = Course_info.objects.get_or_create(course_id=course_id)
+        course_info,flag = Course_info.objects.get_or_create(course_id=course_id, con_id=conid)
         course_info.course_nm = item['course_nm']
         course_info.tag = item['org']      #기관명은 tag field에 저장
-        course_info.con_id = conid
+        #course_info.con_id = conid
+        #   keyheader + item['course_id_org']   # 강좌ID(원형)
+
         # 나머지 항목들 추가
         course_info.course_start_dt = item['course_start_dt']
         course_info.course_end_dt = item['course_end_dt']
@@ -69,10 +71,12 @@ class inst_pipeline(object):
         inst_id = keyheader + item['inst_id']
 
         # db 등록
-        inst_info,flag = Inst_info.objects.get_or_create(inst_id=inst_id)
+        inst_info,flag = Inst_info.objects.get_or_create(inst_id=inst_id, con_id=conid)
         inst_info.inst_nm = item['inst_nm']
         inst_info.tag = item['inst_nm']
-        inst_info.con_id = conid
+       #inst_info.con_id = conid
+        # keyheader + item['inst_id_org'] # 기관ID(원형)
+
         # 나머지 항목들 추가
         inst_info.inst_ceo_pernm = item['inst_ceo_pernm']
         inst_info.inst_set_up_main_agent_cd = item['inst_set_up_main_agent_cd']   # 기관설립주체코드
