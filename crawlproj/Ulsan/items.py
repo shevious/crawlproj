@@ -68,7 +68,7 @@ class Dfd_42Ed_8AabItem(PortiaItem):
         input_processor=Text(),
         output_processor=Join(),
     )
-    enroll_appl_method = scrapy.Field(
+    enroll_appl_method_cd = scrapy.Field(
         input_processor=Text(),
         output_processor=Join(),
     )

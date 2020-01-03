@@ -98,7 +98,7 @@ class UillOrKr(BasePortiaSpider):
                         '.cle > table > tr:nth-child(8) > td:nth-child(4) *::text, .cle > table > tbody > tr:nth-child(6) > td:nth-child(4) *::text',
                         []),
                     Field(
-                        'enroll_appl_method',
+                        'enroll_appl_method_cd',
                         '.cle > table > tr:nth-child(9) > td:nth-child(2) *::text, .cle > table > tbody > tr:nth-child(7) > td:nth-child(2) *::text',
                         []),
                     Field(
@@ -160,6 +160,10 @@ class UillOrKr(BasePortiaSpider):
                             item[keyitem] = item[keyitem].strip()
                             if keyitem == 'edu_method_cd':
                                 item[keyitem] = (re.sub(r'\([^)]*\)', '', item[keyitem])).strip()   # 수강료
+                            elif keyitem == 'enroll_appl_method_cd':
+                                item[keyitem] = item[keyitem].replace('방문접수', 'visit')
+                                item[keyitem] = item[keyitem].replace('온라인접수', 'online')
+                                item[keyitem] = (item[keyitem].replace('전화접수', 'call')).replace('/', '')
                         except KeyError:
                             item[keyitem] = None
                     yield item
