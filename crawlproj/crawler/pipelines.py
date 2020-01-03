@@ -28,7 +28,7 @@ class course_pipeline(object):
 
         # 유효성 체크
         # db 등록
-        course_info,flag = Course_info.objects.get_or_create(course_id=course_id, con_id=conid)
+        course_info,flag = Course_info.objects.get_or_create(course_id=course_id)
         course_info.course_nm = item['course_nm']
         course_info.tag = item['org']      #기관명은 tag field에 저장
         course_info.con_id = conid
@@ -69,7 +69,7 @@ class inst_pipeline(object):
         inst_id = keyheader + item['inst_id']
 
         # db 등록
-        inst_info,flag = Inst_info.objects.get_or_create(inst_id=inst_id, con_id=conid)
+        inst_info,flag = Inst_info.objects.get_or_create(inst_id=inst_id)
         inst_info.inst_nm = item['inst_nm']
         inst_info.tag = item['inst_nm']
         inst_info.con_id = conid

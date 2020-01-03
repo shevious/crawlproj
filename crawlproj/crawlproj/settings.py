@@ -33,6 +33,8 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     "data_folder_out": os.path.join(broker_dir, "out"),
     "data_folder_processed": os.path.join(broker_dir, "processed"),
 }
+CELERY_TIMEZONE='Asia/Seoul'
+#CELERY_ENABLE_UTC = False
 #CELERY_worker_redirect_stdouts = 'DEBUG'
 
 '''
@@ -149,14 +151,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-
+#USE_TZ = True
+USE_TZ = False
+DJANGO_CELERY_BEAT_TZ_AWARE = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
