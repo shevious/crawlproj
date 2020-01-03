@@ -138,6 +138,8 @@ class UillOrKr(BasePortiaSpider):
                     )
                     match = re.search(r'(?<=organIdx=)([^&]*)&idx=([^&]*)', response.url) 
                     item['course_id'] = match.group(1) + '_' + match.group(2)
+                    item['course_id_org'] = match.group(1) + '_' + match.group(2)  # 강좌ID
+
                     course_period = re.match(r'(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
                                              re.sub('[ \xa0]', '', item['course_period']))  # 강좌기간
                     receive_period = re.match(r'(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',

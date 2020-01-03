@@ -116,6 +116,7 @@ class UillOrKr(BasePortiaSpider):
                         organidx = re.search(r"organIdx=([^&]*)", itemUrl)
                         item['url'] = itemUrl       #URL
                         item['inst_id'] = organidx.group(1)     #기관ID
+                        item['inst_id_org'] = organidx.group(1)  # 기관ID(원형)
 
                         address = re.search(r"\((.*?)\).(.*)", item['address'])
 

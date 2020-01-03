@@ -166,6 +166,8 @@ class ERoomOrKr(BasePortiaSpider):
                         item['url'] = itemUrl  # URL
                         item['inst_id'] = None  # 기관ID
                         item['course_id'] = leccodeidx.group(1)  # 강좌ID
+                        item['course_id_org'] = leccodeidx.group(1)
+
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})', re.sub('[ ]', '', item['course_period']))   # 강좌기간
                         register_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',re.sub('[ ]', '', item['register_period']))  # 접수기간
 

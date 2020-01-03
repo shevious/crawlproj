@@ -12,6 +12,7 @@ from ..utils.processors import Item, Field, Text, Number, Price, Date, Url, Imag
 from ..items import PortiaItem, InstItemItem
 
 import pytz, datetime, re
+import hashlib
 
 class GileOrKr(BasePortiaSpider):
     name = "www.gile.or.kr.inst"
@@ -117,8 +118,14 @@ class GileOrKr(BasePortiaSpider):
                 if items:
                     for item in items:
                         organidx = re.search(r"organIdx=([^&]*)", itemUrl)
+
+                        organId = organidx.group(1)
+                        hash = hashlib.sha1(f'{organId}'.encode('UTF-8')).hexdigest()
+                        item['inst_id'] = hash[:14] # 기관ID(hash)
+                        item['inst_id_org'] = organId  # 기관ID(원형)
                         item['url'] = itemUrl  # URL
-                        item['inst_id'] = organidx.group(1) # 기관ID
+                        #item['inst_id'] = hash[:14] # 기관ID
+
                         address = re.search(r"\((.*?)\)(.*)", re.sub(r"[\xa0]", " ", item['address']))     # 주소
 
                         if address == None:

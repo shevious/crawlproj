@@ -107,6 +107,7 @@ class ERoomOrKr(BasePortiaSpider):
                         orgidx = re.search(r"orgcode=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
                         item['inst_id'] = orgidx.group(1)  # 기관ID
+                        item['inst_id_org'] = orgidx.group(1)  # 기관ID(원형)
 
                         # 초기값
                         keyarray = ['inst_nm', 'inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',

@@ -12,6 +12,7 @@ from ..utils.processors import Item, Field, Text, Number, Price, Date, Url, Imag
 from ..items import PortiaItem, CourseInfoItem
 
 import pytz, datetime, re
+import hashlib
 
 class GileOrKr(BasePortiaSpider):
     name = "www.gile.or.kr"
@@ -147,13 +148,21 @@ class GileOrKr(BasePortiaSpider):
                         )
                 except RequiredFieldMissing as exc:
                     self.logger.warning(str(exc))
+
                 if items:
+                    header = 'GB'
                     for item in items:
                         # item['url'] = response.url
                         idxs = re.search(r"organIdx=([^&]*)&lecIdx=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
                         # item['inst_id'] = idxs.group(1) + '_' + idxs.group(2)  # 기관ID
-                        item['course_id'] = idxs.group(2)  # 강좌ID
+                        organIdx = idxs.group(1)
+                        lecIdx = idxs.group(2)
+                        hash = hashlib.sha1(f'{organIdx}{lecIdx}'.encode('UTF-8')).hexdigest()
+                        item['course_id'] = hash[:30]
+                        item['course_id_org'] = header + organIdx + "_" + lecIdx    # 강좌ID
+
+                        #item['course_id'] = idxs.group(2)  # 강좌ID
                         item['enroll_amt'] = (re.sub(r'\(.*\)', '', item['enroll_amt'])).strip()   # 수강료
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',
                                                  re.sub('[ ]', '', item['course_period']))  # 강좌기간
