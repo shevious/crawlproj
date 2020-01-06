@@ -81,6 +81,7 @@ class inst_pipeline(object):
         inst_info.inst_ceo_pernm = item['inst_ceo_pernm']
         inst_info.inst_set_up_main_agent_cd = item['inst_set_up_main_agent_cd']   # 기관설립주체코드
         inst_info.inst_operation_form_cd = item['inst_operation_form_cd']  # 기관운영형태코드
+        inst_info.manager_pernm = item['manager_pernm']
         inst_info.zipcode = item['zipcode']
         inst_info.addr1 = item['addr1']
         inst_info.tel_no = item['tel_no']
