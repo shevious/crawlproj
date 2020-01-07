@@ -163,9 +163,9 @@ class UillOrKr(BasePortiaSpider):
                             if keyitem == 'edu_method_cd':
                                 item[keyitem] = (re.sub(r'\([^)]*\)', '', item[keyitem])).strip()   # 수강료
                             elif keyitem == 'enroll_appl_method_cd':
-                                item[keyitem] = item[keyitem].replace('방문접수', 'visit')
-                                item[keyitem] = item[keyitem].replace('온라인접수', 'online')
-                                item[keyitem] = (item[keyitem].replace('전화접수', 'call')).replace('/', '')
+                                item[keyitem] = item[keyitem].replace('방문신청', 'visit')
+                                item[keyitem] = item[keyitem].replace('온라인신청', 'online')
+                                item[keyitem] = (item[keyitem].replace('전화신청', 'call')).replace('/', '')
                         except KeyError:
                             item[keyitem] = None
                     yield item
