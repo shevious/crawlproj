@@ -109,6 +109,11 @@ class ERoomOrKr(BasePortiaSpider):
                         item['inst_id'] = orgidx.group(1)  # 기관ID
                         item['inst_id_org'] = orgidx.group(1)  # 기관ID(원형)
 
+                        #유효성 check
+                        if 'inst_desc' in item.keys() and len(item['inst_desc']) > 1000 and 'inst_ceo_pernm' not in item.keys():
+                            self.logger.warning('Gangwon Inst validation check failed. skipping...')
+                            continue
+
                         # 초기값
                         keyarray = ['inst_nm', 'inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',
                                     'establishment_dt', 'inst_set_up_main_agent_cd', 'inst_operation_form_cd', 'addr1',

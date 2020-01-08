@@ -5,6 +5,73 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
+sigungu_codes = {
+    'UL': {
+        '남구': '31140',
+        '동구': '31170',
+        '북구': '31200',
+        '울주군': '31710',
+        '중구': '31110',
+    },
+    'GW': {
+        '강릉시': '42150',
+        '고성군': '42820',
+        '동해시': '42170',
+        '삼척시': '42230',
+        '속초시': '42210',
+        '양구군': '42800',
+        '양양군': '42830',
+        '영월군': '42750',
+        '원주시': '42130',
+        '인제군': '42810',
+        '정선군': '42770',
+        '철원군': '42780',
+        '춘천시': '42110',
+        '태백시': '42190',
+        '평창군': '42760',
+        '홍천군': '42720',
+        '화천군': '42790',
+        '횡성군': '42730',
+    },
+    'GB': {
+        '경산시': '47290',
+        '경주시': '47130',
+        '고령군': '47830',
+        '구미시': '47190',
+        '군위군': '47720',
+        '김천시': '47150',
+        '문경시': '47280',
+        '봉화군': '47920',
+        '상주시': '47250',
+        '성주군': '47840',
+        '안동시': '47170',
+        '영덕군': '47770',
+        '영양군': '47760',
+        '영주시': '47210',
+        '영천시': '47230',
+        '예천군': '47900',
+        '울릉군': '47940',
+        '울진군': '47930',
+        '의성군': '47730',
+        '청도군': '47820',
+        '청송군': '47750',
+        '칠곡군': '47850',
+        '포항시 남구': '47111',
+        '포항시 북구': '47113',
+    },
+}
+
+def get_sigungu_code(keyheader, addr):
+    indexFound = -1
+    code = ''
+    for sigungu_nm in sigungu_codes[keyheader]:
+        index = addr.find(sigungu_nm)
+        if index is not -1 and (indexFound is -1 or index < indexFound):
+            indexFound = index
+            code = sigungu_codes[keyheader][sigungu_nm]
+    #print(f'sigungu_code = {code}')
+    return code
+
 from crawler.models import Course_info, Inst_info, Con_log
 
 class course_pipeline(object):
@@ -22,6 +89,7 @@ class course_pipeline(object):
         keyheader = spider.keyheader
         #itemcount = spider.itemcount
         conid = spider.conid
+       
         #print(f'itemcount = {itemcount.item_scarped_count}')
         #itemcount.item_scarped_count += 1
         course_id = keyheader + item['course_id']
@@ -35,6 +103,9 @@ class course_pipeline(object):
         #   keyheader + item['course_id_org']   # 강좌ID(원형)
 
         # 나머지 항목들 추가
+        course_info.sido_cd = conid
+        course_info.sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
+        course_info.course_pttn_cd = 'OF'       # 오프라인
         course_info.course_start_dt = item['course_start_dt']
         course_info.course_end_dt = item['course_end_dt']
         course_info.receive_start_dt = item['receive_start_dt']
@@ -74,10 +145,13 @@ class inst_pipeline(object):
         inst_info,flag = Inst_info.objects.get_or_create(inst_id=inst_id, con_id=conid)
         inst_info.inst_nm = item['inst_nm']
         inst_info.tag = item['inst_nm']
-       #inst_info.con_id = conid
+        #inst_info.con_id = conid
         # keyheader + item['inst_id_org'] # 기관ID(원형)
 
+
         # 나머지 항목들 추가
+        inst_info.sido_cd = conid
+        inst_info.sigungu_cd = get_sigungu_code(keyheader, item['addr1'])
         inst_info.inst_ceo_pernm = item['inst_ceo_pernm']
         inst_info.inst_set_up_main_agent_cd = item['inst_set_up_main_agent_cd']   # 기관설립주체코드
         inst_info.inst_operation_form_cd = item['inst_operation_form_cd']  # 기관운영형태코드

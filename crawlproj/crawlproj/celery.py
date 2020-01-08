@@ -92,11 +92,10 @@ keyheaders = {
     "gyeongbuk": "GB",
 }
 conids = {
-    "ulsan": "01",
-    "gangwon": "02",
-    "gyeongbuk": "03",
+    "ulsan": "31",
+    "gangwon": "42",
+    "gyeongbuk": "47",
 }
-
 
 from datetime import date, datetime
 #from pytz import timezone

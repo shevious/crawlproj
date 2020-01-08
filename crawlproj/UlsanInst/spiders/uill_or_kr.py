@@ -18,12 +18,15 @@ class UillOrKr(BasePortiaSpider):
     name = "www.uill.or.kr.inst"
     allowed_domains = ['www.uill.or.kr']
     start_urls = [
-        'http://www.uill.or.kr/UR/info/organ/list.do?rbsIdx=35&page=1']
+        'http://www.uill.or.kr/UR/info/organ/list.do?rbsIdx=35&page=1'
+        #'http://www.uill.or.kr/UR/info/organ/info.do?rbsIdx=35&organIdx=3258'
+    ]
     rules = [
         Rule(
             LinkExtractor(
                 allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=\d'),
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/list.do\\?rbsIdx=35&page=1$'),
+                #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/organ\\/info.do\\?rbsIdx=35&organIdx=3258$'),
                 deny=()
             ),
             callback='parse_item',
@@ -118,6 +121,12 @@ class UillOrKr(BasePortiaSpider):
                         item['inst_id'] = organidx.group(1)     #기관ID
                         item['inst_id_org'] = organidx.group(1)  # 기관ID(원형)
 
+                        # 유효성 체크
+                        # 예: http://www.uill.or.kr/UR/info/organ/info.do?rbsIdx=35&organIdx=3258
+                        if 'address' not in item:
+                            self.logger.warning('Validation failed for checking address. skipped')
+                            continue
+                        
                         address = re.search(r"\((.*?)\).(.*)", item['address'])
 
                         if address == None:

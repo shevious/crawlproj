@@ -10,10 +10,22 @@ from crawlproj.celery import gyeongbuk_course_task
 class Command(BaseCommand):
     help = "Release the spiders"
 
-    def handle(self, *args, **options):
-        #ulsan_course_task()
-        #ulsan_inst_task()
-        #gangwon_inst_task()
-        #gangwon_course_task()
-        gyeongbuk_inst_task()
-        #gyeongbuk_course_task()
+    def add_arguments(self, parser):
+        parser.add_argument('task', type=str, help='ulsan_course, ulsan_inst, gangwon_course...')
+
+    def handle(self, *args, **kwargs):
+        print(kwargs['task'])
+        if kwargs['task'] == 'ulsan_course':
+            ulsan_course_task()
+        elif kwargs['task'] == 'ulsan_inst':
+            ulsan_inst_task()
+        elif kwargs['task'] == 'gangwon_course':
+            gangwon_course_task()
+        elif kwargs['task'] == 'gangwon_inst':
+            gangwon_inst_task()
+        elif kwargs['task'] == 'gyeongbuk_inst':
+            gyeongbuk_inst_task()
+        elif kwargs['task'] == 'gyeongbuk_course':
+            gyeongbuk_course_task()
+        else:
+            print('Usage: ./manage.py crawl <task_name>')

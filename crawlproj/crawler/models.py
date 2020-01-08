@@ -1,6 +1,9 @@
 from django.db import models
 
 class Course_info(models.Model):
+    class Meta:
+        db_table = "TBTNS_COURSE_INFO_TRANS"
+        unique_together = (('course_id', 'con_id'),)
     course_id = models.CharField(primary_key=True, max_length=32)
     con_id = models.CharField(max_length=15)
     inst_id = models.CharField(null=True, max_length=16)
@@ -54,12 +57,13 @@ class Course_info(models.Model):
     mobile_url_call_method = models.CharField(null=True, max_length=10)
     course_desc = models.CharField(null=True, max_length=2000)
     enroll_amt = models.CharField(null=True, max_length=200)
-    class Meta:
-        db_table = "TBTNS_COURSE_INFO_TRANS"
 
 class Inst_info(models.Model):
+    class Meta:
+        db_table = "TBTNS_INSTITUTE_INFO_TRANS"
+        unique_together = (('inst_id', 'con_id'),)
     inst_id = models.CharField(primary_key=True, max_length=16)
-    con_id = models.CharField(null=True, max_length=15)
+    con_id = models.CharField(max_length=15)
     total_cd = models.CharField(null=True, max_length=16)
     sido_cd = models.CharField(null=True, max_length=10)
     sigungu_cd = models.CharField(null=True, max_length=10)
@@ -107,10 +111,10 @@ class Inst_info(models.Model):
     upd_user_id = models.CharField(null=True, max_length=30)
     upd_dt = models.DateField(null=True)
     del_yn = models.CharField(null=True, max_length=10, default='N')
-    class Meta:
-        db_table = "TBTNS_INSTITUTE_INFO_TRANS"
 
 class Con_log(models.Model):
+    class Meta:
+        db_table = "TBTNS_CON_LOG"
     con_log_id = models.CharField(primary_key=True, max_length=15)
     con_id = models.CharField(null=True, max_length=15)
     con_url = models.CharField(null=True, max_length=1000)
@@ -121,5 +125,3 @@ class Con_log(models.Model):
     con_rework_tm = models.CharField(null=True, max_length=5)
     work_kind_cd = models.CharField(null=True, max_length=5, default='SITE')
     con_status_cd = models.CharField(null=True, max_length=5, default='ERROR')
-    class Meta:
-        db_table = "TBTNS_CON_LOG"
