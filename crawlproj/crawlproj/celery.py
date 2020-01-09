@@ -123,7 +123,7 @@ def ulsan_course_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'COURSE'
+    con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -171,7 +171,7 @@ def ulsan_inst_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'INSTI'
+    con_log.con_kind_cd = 'INSTI_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -203,7 +203,7 @@ def gangwon_inst_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'INSTI'
+    con_log.con_kind_cd = 'INSTI_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -243,7 +243,7 @@ def gangwon_course_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'COURSE'
+    con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -283,7 +283,7 @@ def gyeongbuk_inst_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'INSTI'
+    con_log.con_kind_cd = 'INSTI_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
@@ -323,7 +323,7 @@ def gyeongbuk_course_task(self):
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
-    con_log.con_kind_cd = 'COURSE'
+    con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
     print(f'##### max_log_id = {con_log_id}')
 
