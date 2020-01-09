@@ -13,3 +13,4 @@ cx-oracle==6.4.1 ; sys_platform == "linux"
 https://raw.githubusercontent.com/shevious/crawlproj/master/wheels/cx_Oracle-6.4.1-cp38-cp38-win_amd64.whl ; sys_platform == "win32"
 gunicorn
 pyyaml
+supervisor
