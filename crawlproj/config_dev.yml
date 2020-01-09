@@ -1,0 +1,11 @@
+DATABASES: 
+  oracle: 
+    ENGINE: 'django.db.backends.oracle'
+    NAME: 'xe'
+    USER: 'hr'
+    PASSWORD: 'hr'
+    HOST: 'localhost'
+    PORT: '1521'
+TBL_COURSE_INFO: 'TBTNS_COURSE_INFO_TRANS'
+TBL_INST_INFO: 'TBTNS_INSTITUTE_INFO_TRANS' 
+TBL_CON_LOG: 'TBTNS_CON_LOG'

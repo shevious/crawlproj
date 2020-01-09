@@ -1,8 +1,13 @@
 from django.db import models
+from django.conf import settings
 
 class Course_info(models.Model):
     class Meta:
-        db_table = "TBTNS_COURSE_INFO_TRANS"
+        #db_table = "TBTNS_COURSE_INFO_TRANS"
+        if hasattr(settings, 'TBL_COURSE_INFO'):
+            db_table = settings.TBL_COURSE_INFO 
+        else:
+            db_table = 'TBTNS_COURSE_INFO_TRANS'
         unique_together = (('course_id', 'con_id'),)
     course_id = models.CharField(primary_key=True, max_length=32)
     con_id = models.CharField(max_length=15)
@@ -60,7 +65,11 @@ class Course_info(models.Model):
 
 class Inst_info(models.Model):
     class Meta:
-        db_table = "TBTNS_INSTITUTE_INFO_TRANS"
+        #db_table = "TBTNS_INSTITUTE_INFO_TRANS"
+        if hasattr(settings, 'TBL_INST_INFO'):
+            db_table = settings.TBL_INST_INFO
+        else:
+            db_table = 'TBTNS_INSTITUTE_INFO_TRANS'
         unique_together = (('inst_id', 'con_id'),)
     inst_id = models.CharField(primary_key=True, max_length=16)
     con_id = models.CharField(max_length=15)
@@ -114,7 +123,11 @@ class Inst_info(models.Model):
 
 class Con_log(models.Model):
     class Meta:
-        db_table = "TBTNS_CON_LOG"
+        #db_table = "TBTNS_CON_LOG"
+        if hasattr(settings, 'TBL_CON_LOG'):
+            db_table = settings.TBL_CON_LOG
+        else:
+            db_table = 'TBTNS_CON_LOG'
     con_log_id = models.CharField(primary_key=True, max_length=15)
     con_id = models.CharField(null=True, max_length=15)
     con_url = models.CharField(null=True, max_length=1000)

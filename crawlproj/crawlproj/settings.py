@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#@9up=n0*h%c9i&xy9gk^e+0x3#m&loty**0@nfccrq@y1*1ov'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -169,3 +169,17 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+CONFIG_FILE = BASE_DIR + '/config.yml'
+import codecs
+import yaml
+with codecs.open(CONFIG_FILE, encoding='utf-8') as f:
+    __config__ = yaml.safe_load(f)
+    ENV_TOKENS = __config__
+
+database_env = ENV_TOKENS.get('DATABASES', None)
+for key in database_env.keys():
+    DATABASES[key] = database_env[key]
+TBL_COURSE_INFO = ENV_TOKENS.get('TBL_COURSE_INFO', None)
+TBL_INST_INFO = ENV_TOKENS.get('TBL_INST_INFO', None)
+TBL_CON_LOG = ENV_TOKENS.get('TBL_CON_LOG', None)
