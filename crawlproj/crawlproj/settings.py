@@ -183,3 +183,4 @@ for key in database_env.keys():
 TBL_COURSE_INFO = ENV_TOKENS.get('TBL_COURSE_INFO', None)
 TBL_INST_INFO = ENV_TOKENS.get('TBL_INST_INFO', None)
 TBL_CON_LOG = ENV_TOKENS.get('TBL_CON_LOG', None)
+DEBUG = ENV_TOKENS.get('DEBUG', DEBUG)
