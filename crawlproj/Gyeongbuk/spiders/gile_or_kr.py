@@ -197,7 +197,7 @@ class GileOrKr(BasePortiaSpider):
                             item['hrg_handicap_supp_yn'] = 'N'
 
                         # 초기값
-                        keyarray = ['course_nm', 'org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                        keyarray = ['org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                                     , 'course_start_dt', 'course_end_dt', 'receive_start_dt', 'receive_end_dt'
                                     , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'lang_cd'
                                     , 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']

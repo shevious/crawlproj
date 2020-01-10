@@ -115,7 +115,7 @@ class ERoomOrKr(BasePortiaSpider):
                             continue
 
                         # 초기값
-                        keyarray = ['inst_nm', 'inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',
+                        keyarray = ['inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url',
                                     'establishment_dt', 'inst_set_up_main_agent_cd', 'inst_operation_form_cd', 'addr1',
                                     'inst_operation_status_cd', 'zipcode', 'inst_desc']
                         for keyitem in keyarray:

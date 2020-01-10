@@ -115,7 +115,6 @@ class UillOrKr(BasePortiaSpider):
         for link in links:
             arg = link.re("'(.+?)'")
             url = "http://www.uill.or.kr/UR/info/lecture/" + arg[0]
-            #print(url)
             yield Request(url, self.parse_item)
 
         for sample in self.items:
@@ -152,22 +151,26 @@ class UillOrKr(BasePortiaSpider):
                         item['receive_end_dt'] = receive_period.group(2)
 
                     # 초기값
-                    keyarray = ['course_nm', 'org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                    keyarray = ['org', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                         , 'course_start_dt', 'course_end_dt', 'receive_start_dt', 'receive_end_dt'
                         , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'lang_cd', 'job_ability_course_yn'
                         ,'cb_eval_accept_yn', 'all_eval_accept_yn', 'vsl_handicap_supp_yn', 'hrg_handicap_supp_yn'
                         , 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                    
                     for keyitem in keyarray:
                         try:
                             item[keyitem] = item[keyitem].strip()
                             if keyitem == 'edu_method_cd':
-                                item[keyitem] = (re.sub(r'\([^)]*\)', '', item[keyitem])).strip()   # 수강료
-                            elif keyitem == 'enroll_appl_method_cd':
+                                item[keyitem] = (re.sub(r'\([^)]*\)', '', item[keyitem])).strip()   # 교육방법
+                            elif keyitem == 'enroll_appl_method_cd':    # 접수방법
                                 item[keyitem] = item[keyitem].replace('방문신청', 'visit')
                                 item[keyitem] = item[keyitem].replace('온라인신청', 'online')
                                 item[keyitem] = (item[keyitem].replace('전화신청', 'call')).replace('/', '')
                         except KeyError:
-                            item[keyitem] = None
+                            if keyitem == 'edu_location_desc':
+                                item[keyitem] = ''
+                            else:
+                                item[keyitem] = None
                     yield item
                 break
 

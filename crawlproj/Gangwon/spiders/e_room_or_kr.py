@@ -23,7 +23,6 @@ class ERoomOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
                 allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
                 deny=()
             ),
@@ -139,15 +138,13 @@ class ERoomOrKr(BasePortiaSpider):
                 #n = int(page[1])
                 #print(n)
                 for i in range(1, int(page[1])+1):
-                #for i in range(1, 5):
+                #for i in range(1, 2):
                     url = 'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=' \
                         +str(i) \
                         +'&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
                     #print(url)
                     yield Request(url, self.parse_item)
 
-        #print(links)
-        #print('######')
         for sample in self.items:
             items = []
             itemUrl = response.url
@@ -167,6 +164,11 @@ class ERoomOrKr(BasePortiaSpider):
                         item['inst_id'] = None  # 기관ID
                         item['course_id'] = leccodeidx.group(1)  # 강좌ID
                         item['course_id_org'] = leccodeidx.group(1)
+
+                        #유효성 check
+                        if 'course_nm' not in item.keys() and  'org' not in item.keys():
+                            self.logger.warning('Gangwon Course validation check failed. skipping...')
+                            continue
 
                         course_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})', re.sub('[ ]', '', item['course_period']))   # 강좌기간
                         register_period = re.match('(\d{4}-\d{2}-\d{2})~(\d{4}-\d{2}-\d{2})',re.sub('[ ]', '', item['register_period']))  # 접수기간
@@ -198,8 +200,8 @@ class ERoomOrKr(BasePortiaSpider):
                         else:
                             item['hrg_handicap_supp_yn'] = 'N'
 
-                        # 초기값
-                        keyarray = ['course_nm', 'teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
+                        # 초기값edu_target_cd
+                        keyarray = ['teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                                     , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'edu_quota_cnt'
                                     , 'lang_cd', 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
                         for keyitem in keyarray:
@@ -210,7 +212,10 @@ class ERoomOrKr(BasePortiaSpider):
                                 if keyitem == 'enroll_appl_method_cd':
                                     item['enroll_appl_method_cd'] = re.sub('.gif', '', re.sub(r'\S*_', '', item['enroll_appl_method_cd']))
                             except KeyError:
-                                item[keyitem] = None
+                                if keyitem == 'edu_location_desc':
+                                    item[keyitem] = ''
+                                else:
+                                    item[keyitem] = None
 
                         dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                         item['date'] = "%s:%.3f%s" % (

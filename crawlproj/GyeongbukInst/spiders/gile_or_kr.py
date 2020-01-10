@@ -98,7 +98,7 @@ class GileOrKr(BasePortiaSpider):
 
         for link in links:
             href = link.extract()
-            #print("테스트2 : ", len(href))
+
             url = "http://www.gile.or.kr/web/organ/" + href
             yield Request(url, self.parse_item)
 
@@ -124,7 +124,11 @@ class GileOrKr(BasePortiaSpider):
                         item['inst_id'] = hash[:14] # 기관ID(hash)
                         item['inst_id_org'] = organId  # 기관ID(원형)
                         item['url'] = itemUrl  # URL
-                        #item['inst_id'] = hash[:14] # 기관ID
+
+                        #유효성 check
+                        if 'inst_nm' not in item.keys() :
+                            self.logger.warning('Gyeongbuk Inst validation check failed. skipping...')
+                            continue
 
                         address = re.search(r"\((.*?)\)(.*)", re.sub(r"[\xa0]", " ", item['address']))     # 주소
 
@@ -186,8 +190,8 @@ class GileOrKr(BasePortiaSpider):
                             item['establishment_dt'] = None
 
                         # 초기값
-                        keyarray = ['inst_nm', 'inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url']
-                                    #'establishment_dt', 'inst_operation_form_cd', 'inst_operation_status_cd']
+                        keyarray = ['inst_ceo_pernm', 'manager_pernm', 'tel_no', 'fax_no', 'email', 'homepage_url']
+
                         for keyitem in keyarray:
                             try:
                                 item[keyitem] = item[keyitem].strip()
