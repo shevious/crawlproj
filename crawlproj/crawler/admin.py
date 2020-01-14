@@ -29,7 +29,7 @@ class Course_info_admin(admin.ModelAdmin):
         'link_url',
         #'upd_dt',
     ]
-    list_filter = [('upd_dt', DateRangeFilter), 'sido_cd', 'sigungu_cd',]
+    list_filter = [('upd_dt', DateTimeRangeFilter), 'sido_cd', 'sigungu_cd',]
     readonly_fields = ['reg_dt', 'upd_dt']
 
 admin.site.register(Con_log, Con_log_admin)
