@@ -14,3 +14,4 @@ https://raw.githubusercontent.com/shevious/crawlproj/master/wheels/cx_Oracle-6.4
 gunicorn
 pyyaml
 supervisor
+django-admin-rangefilter
