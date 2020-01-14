@@ -32,9 +32,9 @@ class Course_info(models.Model):
     info_mng_inst_id = models.CharField(null=True, max_length=100)
     info_inp_inst_id = models.CharField(null=True, max_length=100)
     reg_user_id = models.CharField(null=True, max_length=30)
-    reg_dt = models.DateTimeField(null=True)
+    reg_dt = models.DateTimeField(auto_now_add=True)
     upd_user_id = models.CharField(null=True, max_length=20)
-    upd_dt = models.DateTimeField(null=True)
+    upd_dt = models.DateTimeField(auto_now=True)
     tag = models.CharField(null=True, max_length=2000)
     job_ability_course_yn = models.CharField(null=True, max_length=1)
     cb_eval_accept_yn = models.CharField(null=True, max_length=1)
@@ -116,9 +116,9 @@ class Inst_info(models.Model):
     inst_class2_cd = models.CharField(null=True, max_length=10)
     inst_class3_cd = models.CharField(null=True, max_length=50)
     reg_user_id = models.CharField(null=True, max_length=30)
-    reg_dt = models.DateField(null=True)
+    reg_dt = models.DateTimeField(auto_now_add=True)
     upd_user_id = models.CharField(null=True, max_length=30)
-    upd_dt = models.DateField(null=True)
+    upd_dt = models.DateTimeField(auto_now=True)
     del_yn = models.CharField(null=True, max_length=10, default='N')
 
 class Con_log(models.Model):
