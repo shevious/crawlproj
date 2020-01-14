@@ -67,19 +67,25 @@ class SigHandler(object):
         #print('###### item scraped signal')
         self.item_scraped_count += 1
 
+class ItemCount(object):
+    def __init__(self):
+        self.item_scraped_count = 0
+
 @wait_for(timeout=99999)
-def run_spider(settings, sighandler, keyheader='', conid=''):
+#def run_spider(settings, sighandler, keyheader='', conid=''):
+def run_spider(settings, itemcount, keyheader='', conid=''):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
     print('spider list=', sl.list())
     spider = sl.load(sl.list()[0])
+    spider.itemcount = itemcount
     configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
     runner = CrawlerRunner(settings=s)
 
     crawler = runner.create_crawler(spider)
-    if sighandler != None:
-        sighandler.connect(crawler)
+    #if sighandler != None:
+        #sighandler.connect(crawler)
     d = runner.crawl(crawler, keyheader=keyheader, conid=conid)
     #d = runner.crawl(spider, keyheader=keyheader, itemcount=itemcount)
     return d
@@ -137,10 +143,13 @@ def ulsan_course_task(self):
     #settings.LOG_LEVEL = logging.ERROR
 
     setup()
-    sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    #sighandler = SigHandler()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    itemcount = ItemCount()
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
 
@@ -177,9 +186,12 @@ def ulsan_inst_task(self):
 
     setup()
     sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    itemcount = ItemCount()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -214,10 +226,13 @@ def gangwon_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    #sighandler = SigHandler()
+    itemcount = ItemCount()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -254,10 +269,13 @@ def gangwon_course_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
     #settings.LOG_FILE = 'gangwon_course_logfile.log'
     setup()
-    sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    #sighandler = SigHandler()
+    itemcount = ItemCount()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
 
@@ -294,10 +312,13 @@ def gyeongbuk_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
 
     setup()
-    sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    #sighandler = SigHandler()
+    itemcount = ItemCount()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
@@ -336,10 +357,13 @@ def gyeongbuk_course_task(self):
     #settings.LOG_LEVEL = logging.ERROR
 
     setup()
-    sighandler = SigHandler()
-    d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    #sighandler = SigHandler()
+    itemcount = ItemCount()
+    #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
     con_log.reg_dt = timezone.now()
-    con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
+    con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
     con_log.con_status_cd = 'SUCCESS'
     con_log.save()
     print('############## task ended')
