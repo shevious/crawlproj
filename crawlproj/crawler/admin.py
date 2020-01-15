@@ -3,7 +3,7 @@ from .models import Con_log, Inst_info, Course_info
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 class Con_log_admin(admin.ModelAdmin):
-    list_display = ['con_log_id', 'con_id', 'con_tm', 'con_kind_cd', 'con_status_cd', 'log_desc']
+    list_display = ['con_log_id', 'con_id', 'con_tm', 'con_kind_cd', 'con_status_cd', 'log_desc', 'reg_dt']
 
 class Inst_info_admin(admin.ModelAdmin):
     list_display = ['inst_id', 'con_id', 'sido_cd', 'sigungu_cd', 'inst_nm',
