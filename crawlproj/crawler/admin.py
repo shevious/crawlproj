@@ -13,7 +13,7 @@ class Inst_info_admin(admin.ModelAdmin):
         'inst_desc',
         'upd_dt',
     ]
-    list_filter = ['sido_cd', 'sigungu_cd']
+    list_filter = [('upd_dt', DateTimeRangeFilter), 'sido_cd', 'sigungu_cd',]
     readonly_fields = ['reg_dt', 'upd_dt']
 
 class Course_info_admin(admin.ModelAdmin):

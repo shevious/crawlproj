@@ -6,7 +6,10 @@ if [ $USER == "vagrant" ]; then
 else
     VENVDIR=/home/$USER/webcrawler/venv
     WORKDIR=/home/$USER/webcrawler/crawlproj/crawlproj
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
+
+cd $WORKDIR
 
 if [ -z "$VIRTUAL_ENV" ]; then
     source $VENVDIR/bin/activate
