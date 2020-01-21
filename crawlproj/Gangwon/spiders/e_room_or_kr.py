@@ -18,12 +18,14 @@ class ERoomOrKr(BasePortiaSpider):
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-            'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4633&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
     ]
     rules = [
         Rule(
             LinkExtractor(
                 allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
+                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
                 deny=()
             ),
             callback='parse_item',
@@ -87,7 +89,11 @@ class ERoomOrKr(BasePortiaSpider):
                         []),
                     Field(
                         'enroll_appl_method_cd',
-                        '.input_01 > tr:nth-child(7) > td > a > *.icon_img::attr(src), .input_01 > tbody > tr:nth-child(7) > td > a > .icon_img::attr(src)',
+                        '.input_01 > tr:nth-child(7) > td > a > *.icon_img::attr(alt), .input_01 > tbody > tr:nth-child(7) > td > a > .icon_img::attr(alt)',
+                        []),
+                    Field(
+                        'link_url',
+                        '.input_01 > tr:nth-child(7) > td > a::attr(onclick), .input_01 > tbody > tr:nth-child(7) > td > a::attr(onclick)',
                         []),
                     Field(
                         'job_ability_course',
@@ -204,6 +210,11 @@ class ERoomOrKr(BasePortiaSpider):
                         keyarray = ['teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                                     , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'edu_quota_cnt'
                                     , 'lang_cd', 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                        if 'link_url' in item.keys() and type(item['link_url']) is list:
+                            item['link_url'] = item['link_url'][0]
+                            inst_ids = re.search(r'visitOrgFunc\((.*)\)', item['link_url'])
+                            if inst_ids is not None:
+                                item['link_url'] = 'https://www.e-room.or.kr/gw/portal/org_info?mode=read&orgcode='+inst_ids.group(1)
                         for keyitem in keyarray:
                             try:
                                 item[keyitem] = item[keyitem].strip()
