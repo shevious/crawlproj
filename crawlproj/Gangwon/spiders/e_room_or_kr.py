@@ -18,14 +18,15 @@ class ERoomOrKr(BasePortiaSpider):
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4633&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
     ]
     rules = [
         Rule(
             LinkExtractor(
-                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
-                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
+                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
+                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
                 deny=()
             ),
             callback='parse_item',
@@ -93,7 +94,8 @@ class ERoomOrKr(BasePortiaSpider):
                         []),
                     Field(
                         'link_url',
-                        '.input_01 > tr:nth-child(7) > td > a::attr(onclick), .input_01 > tbody > tr:nth-child(7) > td > a::attr(onclick)',
+                        #'.input_01 > tr:nth-child(7) > td > a::attr(onclick), .input_01 > tbody > tr:nth-child(7) > td > a::attr(onclick)',
+                        '.input_01 > tr:nth-child(7) > td > a, .input_01 > tbody > tr:nth-child(7) > td > a',
                         []),
                     Field(
                         'job_ability_course',
@@ -164,6 +166,11 @@ class ERoomOrKr(BasePortiaSpider):
                     self.logger.warning(str(exc))
                 if items:
                     for item in items:
+                        print('###===')
+                        for tt in item['link_url']:
+                            print(tt)
+                        #print(item['link_url'])
+                        print('###===')
                         # item['url'] = response.url
                         leccodeidx = re.search(r"leccode=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
