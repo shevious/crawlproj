@@ -12,21 +12,26 @@ from ..utils.processors import Item, Field, Text, Number, Price, Date, Url, Imag
 from ..items import PortiaItem, ItemnameItem
 
 import pytz, datetime, re
+from scrapy.selector import Selector
 
 class ERoomOrKr(BasePortiaSpider):
     name = "www.e-room.or.kr"
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
+        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4633&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=3047&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=2000&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate'
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=970&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate' # 'http://' as url
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=999&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate' # 'http://' as url
     ]
     rules = [
         Rule(
             LinkExtractor(
-                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
-                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
+                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
+                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
                 deny=()
             ),
             callback='parse_item',
@@ -96,6 +101,7 @@ class ERoomOrKr(BasePortiaSpider):
                         'link_url',
                         #'.input_01 > tr:nth-child(7) > td > a::attr(onclick), .input_01 > tbody > tr:nth-child(7) > td > a::attr(onclick)',
                         '.input_01 > tr:nth-child(7) > td > a, .input_01 > tbody > tr:nth-child(7) > td > a',
+                        #'.input_01 > tr:nth-child(7) > td > a::attr(href), .input_01 > tbody > tr:nth-child(7) > td > a::attr(href)',
                         []),
                     Field(
                         'job_ability_course',
@@ -166,11 +172,22 @@ class ERoomOrKr(BasePortiaSpider):
                     self.logger.warning(str(exc))
                 if items:
                     for item in items:
-                        print('###===')
-                        for tt in item['link_url']:
-                            print(tt)
-                        #print(item['link_url'])
-                        print('###===')
+                        #print('###===')
+                        if 'link_url' in item.keys():
+                            for link_url in item['link_url']:
+                                online = Selector(text=link_url).xpath('//a/@href').get()
+                                offline = Selector(text=link_url).xpath('//a/@onclick').get()
+                                if online is not None and online != 'http://':
+                                    item['link_url'] = online
+                                    break
+                                elif offline is not None:
+                                    inst_ids = re.search(r'visitOrgFunc\((.*)\)', offline)
+                                    if inst_ids is not None:
+                                        item['link_url'] = 'https://www.e-room.or.kr/gw/portal/org_info?mode=read&orgcode='+inst_ids.group(1)
+                            if type(item['link_url']) is list:
+                                del item['link_url'] 
+                            #print(f"link_url = {item['link_url']}")
+                        #print('###===')
                         # item['url'] = response.url
                         leccodeidx = re.search(r"leccode=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
@@ -217,11 +234,13 @@ class ERoomOrKr(BasePortiaSpider):
                         keyarray = ['teacher_pernm', 'enroll_amt', 'edu_method_cd', 'edu_cycle_content'
                                     , 'edu_location_desc', 'inquiry_tel_no', 'edu_quota_cnt', 'edu_quota_cnt'
                                     , 'lang_cd', 'edu_target_cd', 'course_desc', 'link_url', 'enroll_appl_method_cd']
+                        '''
                         if 'link_url' in item.keys() and type(item['link_url']) is list:
                             item['link_url'] = item['link_url'][0]
                             inst_ids = re.search(r'visitOrgFunc\((.*)\)', item['link_url'])
                             if inst_ids is not None:
                                 item['link_url'] = 'https://www.e-room.or.kr/gw/portal/org_info?mode=read&orgcode='+inst_ids.group(1)
+                        '''
                         for keyitem in keyarray:
                             try:
                                 item[keyitem] = item[keyitem].strip()
