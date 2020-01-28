@@ -1,4 +1,4 @@
-django==1.11.26
+django==1.11.27
 django-timezone-field==2.1
 celery
 django-celery-results
