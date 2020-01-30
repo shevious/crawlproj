@@ -104,14 +104,21 @@ class course_pipeline(object):
 
         # 나머지 항목들 추가
         course_info.sido_cd = conid
-        course_info.sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
+        if 'sigungu_cd' in item.keys(): # 강원도 sigungu 특별처리함.
+            course_info.sigungu_cd = get_sigungu_code(keyheader, item['sigungu_cd'])
+        else:
+            course_info.sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
         course_info.course_pttn_cd = 'OF'       # 오프라인
         course_info.course_start_dt = item['course_start_dt']
         course_info.course_end_dt = item['course_end_dt']
         course_info.receive_start_dt = item['receive_start_dt']
         course_info.receive_end_dt = item['receive_end_dt']
         course_info.teacher_pernm = item['teacher_pernm']
-        course_info.enroll_amt = item['enroll_amt']
+        enroll_amt = item['enroll_amt']
+        if enroll_amt == '무료':
+            enroll_amt = '0'
+        enroll_amt = enroll_amt.replace('원', '').replace(',', '')
+        course_info.enroll_amt = enroll_amt
         course_info.edu_method_cd = item['edu_method_cd']      # 교육방법CD
         course_info.edu_target_cd = item['edu_target_cd']       # 교육대상CD
         course_info.edu_cycle_content = item['edu_cycle_content']  # 교육주기

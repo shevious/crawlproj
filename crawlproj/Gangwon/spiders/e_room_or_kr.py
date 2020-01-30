@@ -18,7 +18,7 @@ class ERoomOrKr(BasePortiaSpider):
     name = "www.e-room.or.kr"
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
-        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4633&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
@@ -26,6 +26,7 @@ class ERoomOrKr(BasePortiaSpider):
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=2000&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate'
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=970&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate' # 'http://' as url
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=999&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate' # 'http://' as url
+        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=2&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
     ]
     rules = [
         Rule(
@@ -132,15 +133,23 @@ class ERoomOrKr(BasePortiaSpider):
                         '.input_01 > tr:nth-child(11) > td *::text, .input_01 > tbody > tr:nth-child(11) > td *::text',
                         [])])]]
 
-    def parse_item(self, response):
+    def parse_item(self, response, *args, **kw):
 
+        #print('===>')
+        #print(args)
+        #print(kw)
+        #print('===>')
         links = response.xpath("//a/@onclick[contains(.,'selectRow')]")
-        for link in links:
+        locations = response.xpath("//div[contains(@class, 'lectureCont')]/ul/li[1]/dl/dd/text()")
+        for link, location in zip(links, locations):
             #num = link.re("'(.*)'")
             num = link.re("\((.+?)\)")
             url = 'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode='+num[0]+'&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
-            yield Request(url, self.parse_item)
+            #print(num, location.get())
+            yield Request(url, self.parse_item, cb_kwargs={'location': location.get()})
             #print(link.data)
+        #for location in locations:
+            #print(location.get())
         links = response.xpath("//script")
         for link in links:
             #page = link.re("pagingFunc\((.+?)\)")
@@ -172,7 +181,8 @@ class ERoomOrKr(BasePortiaSpider):
                     self.logger.warning(str(exc))
                 if items:
                     for item in items:
-                        #print('###===')
+                        if 'location' in kw.keys():
+                            item['sigungu_cd'] = kw['location']
                         if 'link_url' in item.keys():
                             for link_url in item['link_url']:
                                 online = Selector(text=link_url).xpath('//a/@href').get()
@@ -185,9 +195,8 @@ class ERoomOrKr(BasePortiaSpider):
                                     if inst_ids is not None:
                                         item['link_url'] = 'https://www.e-room.or.kr/gw/portal/org_info?mode=read&orgcode='+inst_ids.group(1)
                             if type(item['link_url']) is list:
-                                del item['link_url'] 
+                                item['link_url'] = itemUrl
                             #print(f"link_url = {item['link_url']}")
-                        #print('###===')
                         # item['url'] = response.url
                         leccodeidx = re.search(r"leccode=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL
