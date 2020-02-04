@@ -73,12 +73,12 @@ class ItemCount(object):
 
 @wait_for(timeout=99999)
 #def run_spider(settings, sighandler, keyheader='', conid=''):
-def run_spider(settings, itemcount, keyheader='', conid=''):
+def run_spider(settings, itemcount, keyheader='', conid='', spider_id=0):
     s = Settings()
     s.setmodule(settings)
     sl = SpiderLoader(settings=s)
     print('spider list=', sl.list())
-    spider = sl.load(sl.list()[0])
+    spider = sl.load(sl.list()[spider_id])
     spider.itemcount = itemcount
     configure_logging({'LOG_LEVEL': 'DEBUG'}) # scrapy 로그 레벨 설정
     runner = CrawlerRunner(settings=s)
@@ -139,6 +139,7 @@ def ulsan_course_task(self):
     print(f'##### max_log_id = {con_log_id}')
 
     settings = ulsan_settings
+    settings.mode = 'sigungu'
     settings.ITEM_PIPELINES = {
         'crawler.pipelines.course_pipeline': 300,
     }
@@ -152,6 +153,7 @@ def ulsan_course_task(self):
     #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
     itemcount = ItemCount()
     d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring], spider_id=1)
     con_log.reg_dt = timezone.now()
     #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
