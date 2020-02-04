@@ -20,11 +20,17 @@ class UillOrKr(BasePortiaSpider):
     start_urls = [
         #'http://www.uill.or.kr/UR/info/lecture/view.do?rbsIdx=34&page=1&organIdx=3175&idx=EX18651'
         'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&page=1'
+        #'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&gugun=3111&page=1',
+        #'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&gugun=3114&page=1',
+        #'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&gugun=3117&page=1',
+        #'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&gugun=3120&page=1',
+        #'http://www.uill.or.kr/UR/info/lecture/list.do?rbsIdx=34&gugun=3171&page=1',
     ]
     rules = [
         Rule(
             LinkExtractor(
-                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=\d'),
+                #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&gugun=\\d+&page=\\d+'),
+                allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=\\d+'),
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/view.do\\?rbsIdx=34\\&page=1\\&organIdx=3175\\&idx=EX18651'),
                 #allow=('www\\.uill\\.or\\.kr\\/UR\\/info\\/lecture\\/list\\.do\\?rbsIdx=34&page=1$'),
                 deny=()
@@ -110,11 +116,14 @@ class UillOrKr(BasePortiaSpider):
         ]
     ]
 
-    def parse_item(self, response):
+    def parse_item(self, response, *args, **kw):
         links = response.xpath("//a/@onclick[contains(.,'fn_applCheck2')]")
         for link in links:
             arg = link.re("'(.+?)'")
             url = "http://www.uill.or.kr/UR/info/lecture/" + arg[0]
+            #gugun = re.search(r'(?<=gugun=)([^&]*)&', response.url) 
+            #location = gugun.group(1)
+            #yield Request(url, self.parse_item, cb_kwargs={'location': location})
             yield Request(url, self.parse_item)
 
         for sample in self.items:
@@ -128,6 +137,8 @@ class UillOrKr(BasePortiaSpider):
                 self.logger.warning(str(exc))
             if items:
                 for item in items:
+                    #if 'location' in kw.keys():
+                        #item['sigungu_cd'] = kw['location']
                     item['url'] = response.url
                     dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                     item['date'] =  "%s:%.3f%s" % (

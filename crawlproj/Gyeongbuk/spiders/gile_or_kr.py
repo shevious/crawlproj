@@ -19,11 +19,33 @@ class GileOrKr(BasePortiaSpider):
     allowed_domains = ['www.gile.or.kr']
     start_urls = [
         #'http://www.gile.or.kr/web/lecture/view.do?mId=72&page=1&organIdx=2019111800000001&lecIdx=2019120900000003']
-        'http://www.gile.or.kr/web/lecture/list.do?mId=72&page=1']
+        'http://www.gile.or.kr/web/lecture/list.do?mId=72&page=1'
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4711&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4713&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4715&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4717&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4719&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4721&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4723&page=1',
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4725&page=1', #상주
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4728&page=1', #문경
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4729&page=1', #경산
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4772&page=1', #군위
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4773&page=1', #의성
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4775&page=1', #청송
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4776&page=1', #영양
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4776&page=1', #영양
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4777&page=1', #영덕
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4782&page=1', #청도
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4783&page=1', #고령
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4784&page=1', #성주
+        #'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4785&page=1', #칠곡
+    ]
     rules = [
         Rule(
             LinkExtractor(
-                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\d'),
+                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&is_ord_local_cd=\\d+'),
+                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\\d+'),
                 #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=1$'),
                 deny=()
             ),
@@ -124,7 +146,7 @@ class GileOrKr(BasePortiaSpider):
                         [])])]]
 
 
-    def parse_item(self, response):
+    def parse_item(self, response, *args, **kw):
 
         links = response.xpath("//div/span[@class='tit']/a/@href")
 
@@ -135,6 +157,9 @@ class GileOrKr(BasePortiaSpider):
             #if (href.find("page=1&")) > int(0) :
             #print("href : ", href)
             url = "http://www.gile.or.kr/web/lecture/" + href
+            #gugun = re.search(r'(?<=is_ord_local_cd=)([^&]*)&', response.url)
+            #location = gugun.group(1)
+            #yield Request(url, self.parse_item, cb_kwargs={'location': location})
             yield Request(url, self.parse_item)
 
         for sample in self.items:
@@ -152,6 +177,8 @@ class GileOrKr(BasePortiaSpider):
                 if items:
                     header = 'GB'
                     for item in items:
+                        if 'location' in kw.keys():
+                            item['sigungu_cd'] = kw['location']
                         # item['url'] = response.url
                         idxs = re.search(r"organIdx=([^&]*)&lecIdx=([^&]*)", itemUrl)
                         item['url'] = itemUrl  # URL

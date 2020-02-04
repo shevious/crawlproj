@@ -104,8 +104,11 @@ class course_pipeline(object):
 
         # 나머지 항목들 추가
         course_info.sido_cd = conid
-        if 'sigungu_cd' in item.keys(): # 강원도 sigungu 특별처리함.
-            course_info.sigungu_cd = get_sigungu_code(keyheader, item['sigungu_cd'])
+        if 'sigungu_cd' in item.keys(): # 울산,강원도 sigungu 특별처리함.
+            if keyheader == 'UL':
+                course_info.sigungu_cd = item['sigungu_cd']+'0'
+            else: # 강원도
+                course_info.sigungu_cd = get_sigungu_code(keyheader, item['sigungu_cd'])
         else:
             course_info.sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
         course_info.course_pttn_cd = 'OF'       # 오프라인

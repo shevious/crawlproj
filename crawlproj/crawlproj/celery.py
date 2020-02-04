@@ -102,6 +102,11 @@ conids = {
     "gangwon": "42",
     "gyeongbuk": "47",
 }
+conids_course = {
+    "ulsan": "76",
+    "gangwon": "74",
+    "gyeongbuk": "78",
+}
 
 from datetime import date, datetime
 #from pytz import timezone
@@ -127,7 +132,7 @@ def ulsan_course_task(self):
     maxid = Con_log.objects.aggregate(Max('con_log_id'))
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
-    con_log.con_id = conids[keystring]
+    con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
     con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
@@ -146,7 +151,7 @@ def ulsan_course_task(self):
     #sighandler = SigHandler()
     #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
     itemcount = ItemCount()
-    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring])
     con_log.reg_dt = timezone.now()
     #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
@@ -256,7 +261,7 @@ def gangwon_course_task(self):
     maxid = Con_log.objects.aggregate(Max('con_log_id'))
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
-    con_log.con_id = conids[keystring]
+    con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
     con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
@@ -272,7 +277,7 @@ def gangwon_course_task(self):
     #sighandler = SigHandler()
     itemcount = ItemCount()
     #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
-    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring])
     con_log.reg_dt = timezone.now()
     #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
@@ -342,7 +347,7 @@ def gyeongbuk_course_task(self):
     maxid = Con_log.objects.aggregate(Max('con_log_id'))
     con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
     con_log = Con_log(con_log_id=con_log_id)
-    con_log.con_id = conids[keystring]
+    con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
     con_log.con_kind_cd = 'COURSE_CRL'
     con_log.save()
@@ -360,7 +365,7 @@ def gyeongbuk_course_task(self):
     #sighandler = SigHandler()
     itemcount = ItemCount()
     #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
-    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring])
     con_log.reg_dt = timezone.now()
     #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.log_desc = f'total count = {itemcount.item_scraped_count}'
