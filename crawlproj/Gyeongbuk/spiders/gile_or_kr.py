@@ -245,6 +245,8 @@ class GileOrKr(BasePortiaSpider):
                                     item[keyitem] = (item[keyitem].replace('전화접수', 'call')).replace('/', '')
                             except KeyError:
                                 item[keyitem] = None
+                        if item['link_url'] == None:
+                            item['link_url'] = itemUrl
 
                         dt = datetime.datetime.now(tz=pytz.timezone('Asia/Seoul'))
                         item['date'] = "%s:%.3f%s" % (

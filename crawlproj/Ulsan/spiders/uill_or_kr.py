@@ -194,6 +194,8 @@ class UillOrKr(BasePortiaSpider):
                                 item[keyitem] = ''
                             else:
                                 item[keyitem] = None
+                    if item['link_url'] == None:
+                        item['link_url'] = itemUrl
                     yield item
                 break
 
