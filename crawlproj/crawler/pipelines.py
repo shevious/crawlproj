@@ -5,6 +5,12 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
+sido_codes = {
+    'UL': '31',
+    'GW': '42',
+    'GB': '47',
+}
+
 sigungu_codes = {
     'UL': {
         '남구': '3114',
@@ -104,7 +110,7 @@ class course_pipeline(object):
         #   keyheader + item['course_id_org']   # 강좌ID(원형)
 
         # 나머지 항목들 추가
-        course_info.sido_cd = conid
+        course_info.sido_cd = sido_codes[keyheader]
         if 'sigungu_cd' in item.keys(): # 울산,강원도 sigungu 특별처리함.
             if keyheader == 'UL' or keyheader == 'GB': #울산
                 course_info.sigungu_cd = item['sigungu_cd']
