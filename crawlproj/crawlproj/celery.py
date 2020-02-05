@@ -368,6 +368,7 @@ def gyeongbuk_course_task(self):
     itemcount = ItemCount()
     #d = run_spider(settings, sighandler=sighandler, keyheader=keyheaders[keystring], conid=conids[keystring])
     d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring])
+    d = run_spider(settings, itemcount=itemcount, keyheader=keyheaders[keystring], conid=conids_course[keystring], spider_id=1)
     con_log.reg_dt = timezone.now()
     #con_log.log_desc = f'total count = {sighandler.item_scraped_count}'
     con_log.log_desc = f'total count = {itemcount.item_scraped_count}'

@@ -19,7 +19,7 @@ class Inst_info_admin(admin.ModelAdmin):
 class Course_info_admin(admin.ModelAdmin):
     list_display = [ 'course_nm',
         'edu_location_desc',
-        #'sigungu_cd',
+        'sigungu_cd',
         'tag',
         'course_desc',
         'inquiry_tel_no',

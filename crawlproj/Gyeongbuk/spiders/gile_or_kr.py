@@ -44,8 +44,10 @@ class GileOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&is_ord_local_cd=\\d+'),
-                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\\d+'),
+                allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\\d+$',
+                       'www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&is_ord_local_cd=\\d+&page=\\d+$'),
+                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&is_ord_local_cd=\\d+$'),
+                #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=\\d+'),
                 #allow=('www.gile.or.kr\\/web\\/lecture\\/list.do\\?mId=72&page=1$'),
                 deny=()
             ),
@@ -256,7 +258,7 @@ class GileOrKr(BasePortiaSpider):
 class GileOrKr2(GileOrKr):
     name = "www.gile.or.kr2"
     start_urls = [
-        'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4711&page=1',
+        'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4711&page=1', #포항
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4713&page=1',
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4715&page=1',
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4717&page=1',
@@ -276,4 +278,7 @@ class GileOrKr2(GileOrKr):
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4783&page=1', #고령
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4784&page=1', #성주
         'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4785&page=1', #칠곡
+        'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4790&page=1', #예천
+        'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4793&page=1', #봉화
+        'http://www.gile.or.kr/web/lecture/list.do?mId=72&is_ord_local_cd=4794&page=1', #울릉
     ]

@@ -64,7 +64,7 @@ sigungu_codes = {
 
 def get_sigungu_code(keyheader, addr):
     indexFound = -1
-    code = ''
+    code = None
     for sigungu_nm in sigungu_codes[keyheader]:
         index = addr.find(sigungu_nm)
         if index is not -1 and (indexFound is -1 or index < indexFound):
@@ -106,12 +106,14 @@ class course_pipeline(object):
         # 나머지 항목들 추가
         course_info.sido_cd = conid
         if 'sigungu_cd' in item.keys(): # 울산,강원도 sigungu 특별처리함.
-            if keyheader == 'UL': #울산
+            if keyheader == 'UL' or keyheader == 'GB': #울산
                 course_info.sigungu_cd = item['sigungu_cd']
             else: # 강원도
                 course_info.sigungu_cd = get_sigungu_code(keyheader, item['sigungu_cd'])
         else:
-            course_info.sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
+            sigungu_cd = get_sigungu_code(keyheader, item['edu_location_desc'])
+            if sigungu_cd != None:
+                course_info.sigungu_cd = sigungu_cd
         course_info.course_pttn_cd = 'OF'       # 오프라인
         course_info.course_start_dt = item['course_start_dt']
         course_info.course_end_dt = item['course_end_dt']
