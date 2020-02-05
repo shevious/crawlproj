@@ -346,8 +346,8 @@ def gyeongbuk_course_task(self):
 
     #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
     #task_log.save()
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))
-    con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
+    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
