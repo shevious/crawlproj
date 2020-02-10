@@ -116,6 +116,20 @@ from time import strftime
 # 울산 강좌 정보
 from Ulsan import settings as ulsan_settings
 
+def get_next_con_log_id():
+    from crawler.models import Course_info, Con_log
+    from django.db.models.functions import Length
+    from django.db.models import Max
+    max_lens = Con_log.objects.extra(select={'length':'Length(con_log_id)'}).order_by('-length')[:1]
+    if len(max_lens) == 0:
+        return '0';
+    else:
+        maxlen = len(max_lens[0].con_log_id)
+        con_logs = Con_log.objects.annotate(text_len=Length('con_log_id')).filter(text_len__gte=maxlen)
+        maxid = con_logs.aggregate(Max('con_log_id'))['con_log_id__max']
+        con_log_id = ('{:0'+f'{maxlen}'+'d}').format(int(maxid)+1)
+        return con_log_id
+
 @app.task(bind=True)
 def ulsan_course_task(self):
     task_id = current_task.request.id
@@ -125,14 +139,14 @@ def ulsan_course_task(self):
     keystring = "ulsan"
 
     from crawler.models import Course_info, Con_log
-    from django.db.models import Max
 
     #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
     #task_log.save()
     #maxid = Con_log.objects.aggregate(Max('con_log_id'))
     #con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
@@ -186,8 +200,9 @@ def ulsan_inst_task(self):
     #settings.DOWNLOAD_DELAY = 1.0 # 다운로드 지연(디버깅용)
     #maxid = Con_log.objects.aggregate(Max('con_log_id'))
     #con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
@@ -223,8 +238,9 @@ def gangwon_inst_task(self):
 
     #maxid = Con_log.objects.aggregate(Max('con_log_id'))
     #con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
@@ -268,8 +284,9 @@ def gangwon_course_task(self):
     #task_log.save()
     #maxid = Con_log.objects.aggregate(Max('con_log_id'))
     #con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
@@ -313,8 +330,9 @@ def gyeongbuk_inst_task(self):
 
     #maxid = Con_log.objects.aggregate(Max('con_log_id'))
     #con_log_id = str(int('9' + maxid['con_log_id__max']) + 1)[1:]
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
@@ -356,8 +374,9 @@ def gyeongbuk_course_task(self):
 
     #task_log = Task_log(task_id = task_id, name = 'ulsan_course')
     #task_log.save()
-    maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
-    con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    #maxid = Con_log.objects.aggregate(Max('con_log_id'))['con_log_id__max']
+    #con_log_id = ('{:0'+f'{len(maxid)}'+'d}').format(int(maxid)+1)
+    con_log_id = get_next_con_log_id()
     con_log = Con_log(con_log_id=con_log_id)
     con_log.con_id = conids_course[keystring]
     con_log.con_tm = datetime.now().strftime('%H:%M')
