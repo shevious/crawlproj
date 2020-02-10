@@ -129,7 +129,8 @@ class course_pipeline(object):
         enroll_amt = item['enroll_amt']
         if enroll_amt == '무료':
             enroll_amt = '0'
-        enroll_amt = enroll_amt.replace('원', '').replace(',', '')
+        if type(enroll_amt) == str:
+            enroll_amt = enroll_amt.replace('원', '').replace(',', '')
         course_info.enroll_amt = enroll_amt
         course_info.edu_method_cd = item['edu_method_cd']      # 교육방법CD
         course_info.edu_target_cd = item['edu_target_cd']       # 교육대상CD
