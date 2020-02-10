@@ -18,7 +18,8 @@ class ERoomOrKr(BasePortiaSpider):
     name = "www.e-room.or.kr"
     allowed_domains = ['www.e-room.or.kr']
     start_urls = [
-        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=list&leccode=&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
+        'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4116&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate=' # course_nm에 '<' 포함
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=3444&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate=' # enroll_amt == None case
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4647&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
         #'https://www.e-room.or.kr/gw/portal/org_lecture_info?mode=read&leccode=4633&page_no=1&selectRegion=&gubun=&studyKind=&searchKeyWord=&searchFromDate=&searchEndDate='
@@ -32,8 +33,8 @@ class ERoomOrKr(BasePortiaSpider):
     rules = [
         Rule(
             LinkExtractor(
-                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
-                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
+                #allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=list'),
+                allow=('www.e-room.or.kr\\/gw\\/portal\\/org_lecture_info\\?mode=read'),
                 deny=()
             ),
             callback='parse_item',
@@ -182,6 +183,10 @@ class ERoomOrKr(BasePortiaSpider):
                     self.logger.warning(str(exc))
                 if items:
                     for item in items:
+                        #h3 = response.xpath("//div[@class='content']/h3").get() # not working because <..> is not parsed by xpath
+                        if 'course_nm' not in item.keys():
+                            h3 = re.search(r'<h3>(.*)</h3>', response.body.decode('utf-8'))
+                            item['course_nm'] = h3.group(1).replace('<', '').replace('>', '')
                         if 'location' in kw.keys():
                             item['sigungu_cd'] = kw['location']
                         if 'link_url' in item.keys():
